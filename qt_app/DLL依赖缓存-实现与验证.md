@@ -28,7 +28,7 @@
 
 ## 验证证据
 
-最终完整测试：`python -m pytest -q` → **128 passed in 34.41s**。
+最终完整测试：`python -m pytest -q` → **132 passed in 43.90s**。
 
 覆盖：
 
@@ -39,6 +39,8 @@
 - Qt 筛选后保留隐藏选择、真实路径恢复、保存、切根隔离旧结果和关闭时取消线程。
 - 使用本机真实 Inno 7 编译 helper → 主子包 → 总包；实际执行两次完整夹具构建，第二次复用依赖包。错误 DLL 哈希与被替换缓存 EXE 均被编译器拒绝。
 - Optional runtime installer failures, user cancellation, MSI 1602/1641, and other non-whitelisted exit codes are logged and skipped so later runtime and A/B/C installers continue; A/B/C failures still stop subsequent software.
+- 总安装器提供安装根目录选择页，通过 `/DIR` 将各自的产品子目录传给所选 A/B/C 子安装器。各子安装器显式注册卸载项，并增加开始菜单卸载快捷方式。
+- 无业务文件的 Inno 路径事件夹具验证最终产品目录过长时提前拦截、仅校验所选组件，以及返回修改根目录；Windows 图标解析器验证卸载图标支持带逗号的路径。
 
 原生截图已检查：`qa-artifacts/dependency-cache/workspace.png`、`dependencies.png`。均使用微型模拟目录，未扫描或哈希用户的大型业务软件目录。
 
@@ -46,14 +48,14 @@
 
 ## 发布
 
-- `dist/DesktopPackager/DesktopPackager.exe`：已通过 PyInstaller `--clean` 完整重建，2,452,409 字节。
-- `dist/DesktopPackager-Windows-x64.zip`：38,266,365 字节，含完整应用目录 164 个文件及 README。
+- `dist/DesktopPackager/DesktopPackager.exe`：已通过 PyInstaller `--clean` 在独立目录完整重建后更新，2,453,654 字节；独立构建副本保存在 `dist/latest/DesktopPackager`。
+- `dist/DesktopPackager-Windows-x64.zip`：38,267,726 字节，含完整应用目录 164 个文件及 README。
 - 冻结 EXE 从系统临时目录运行离屏冒烟与原生截图，退出码均为 0。
-- 冻结归档确认包含新依赖核心和 UI 模块；不含已删除的安装预览模块。
+- 冻结归档的 8 个核心/UI 模块代码与当前源码一致；不含已删除的安装预览模块。
 - ZIP CRC、ZIP 内 EXE 与本地 EXE、ZIP 内 README 与源码均校验通过。
-- EXE SHA-256：`539030dd71142826b0d852deedb5fddcdcb320aa9f563abe762d76326a100e12`。
-- ZIP SHA-256：`ce734c330c18b2f15703b053cc13a4b471c356dd943bd6995d33b351b250f0af`。
+- EXE SHA-256：`30810056fd893917acc6c6eb0c7b5e63ff0b767d30f5e5c54c0637ff14240985`。
+- ZIP SHA-256：`6a37221e25f1e10f3900cb3678d94814d1c139e1a9b29cceb872d26ac141b4b0`。
 
-发布清单：`qa-artifacts/release/release-manifest.json`。构建日志：`qa-artifacts/dependency-cache/build.log`。验证摘要：`qa-artifacts/runtime-icon/verification.json`。
+发布清单：`qa-artifacts/release/release-manifest.json`。完整测试日志：`qa-artifacts/release/final-tests.txt`。冻结程序验证摘要：`qa-artifacts/release/artifact-checks.json`。
 
 首次仍需哈希并压缩所选 DLL；命中后仍读取当前 DLL 和缓存包做校验，并重新生成主包与总包。任一选中成员变化，首版重建该软件的整个依赖子包。未运行目标软件或运行库安装器；真实产品的安装、运行、升级与卸载仍需在测试机验收。

@@ -185,7 +185,7 @@ def child_script(software, source_dir: Path, app_id: str, install_dir: str,
              'DefaultDirName={autopf}\\' + directive(install_dir),
              f'DefaultGroupName={directive(shortcut_name)}', 'UsePreviousAppDir=yes',
              'DisableProgramGroupPage=yes', 'WizardStyle=modern', 'PrivilegesRequired=admin',
-             'Uninstallable=yes', *_compression_lines(),
+             'Uninstallable=yes', 'CreateUninstallRegKey=yes', 'UninstallFilesDir={app}', *_compression_lines(),
              'AlwaysRestart=no', 'RestartIfNeededByRun=no', 'SetupLogging=yes',
              'OutputBaseFilename=child', 'OutputDir=.', '', '[Languages]',
              f'Name: "chinesesimp"; MessagesFile: {quoted(language_file, constants=True)}', '', '[Dirs]']
@@ -222,10 +222,12 @@ def child_script(software, source_dir: Path, app_id: str, install_dir: str,
             flags = 'onlyifdoesntexist uninsneveruninstall' if is_mutable(relative) else 'ignoreversion'
             lines.append(f'Source: {source}; DestDir: {quoted("{app}" + parent, constants=True)}; Flags: {flags}')
     entry = '{app}\\' + _win(software.entry_relative).replace('{', '{{')
+    lines.insert(5, 'UninstallDisplayIcon=' + entry + ',0')
     parent = PureWindowsPath(software.entry_relative).parent
     work = '{app}' + ('' if str(parent) == '.' else '\\' + str(parent).replace('{', '{{'))
     lines += ['', '[Icons]',
               f'Name: {quoted("{group}\\" + shortcut_name.replace("{", "{{"), constants=True)}; Filename: {quoted(entry, constants=True)}; WorkingDir: {quoted(work, constants=True)}']
+    lines.append(f'Name: {quoted("{group}\\卸载 " + shortcut_name.replace("{", "{{"), constants=True)}; Filename: {quoted("{uninstallexe}", constants=True)}')
     if desktop_shortcuts:
         lines.append(f'Name: {quoted("{autodesktop}\\" + shortcut_name.replace("{", "{{"), constants=True)}; Filename: {quoted(entry, constants=True)}; WorkingDir: {quoted(work, constants=True)}')
     if dependency_package:
@@ -263,16 +265,19 @@ def outer_script(name: str, version: str, children: list[dict], runtimes: list,
         lines.append(f'Source: {quoted(runtime.path, constants=True)}; DestDir: "{{tmp}}"; DestName: "{filename}"; Flags: dontcopy nocompression')
         tasks.append({'file': filename, 'name': runtime_names[index - 1] if runtime_names is not None else Path(runtime.path).name, 'role': '',
                       'params': runtime.params, 'msi': Path(runtime.path).suffix.lower() == '.msi',
-                      'codes': '|'.join(str(code) for code in runtime.success_codes), 'dir': '', 'key': '', 'native64': False})
+                      'codes': '|'.join(str(code) for code in runtime.success_codes), 'dir': '', 'key': '', 'native64': False,
+                      'subdir': ''})
     for child in children:
         filename = f'app-{child["role"]}.exe'
         checksum = f'; Hash: {quoted(child["sha256"])}' if child.get('sha256') else ''
         lines.append(f'Source: {quoted(child["path"], constants=True)}; DestDir: "{{tmp}}"; DestName: "{filename}"{checksum}; Flags: dontcopy nocompression')
+        install_dir = child.get('install_dir', safe_filename(child['name']) + '-' + child['role'])
         tasks.append({'file': filename, 'name': ROLE_NAMES[child['role']] + ' · ' + child['name'] + ' ' + child['version'], 'role': child['role'],
                       'params': '/VERYSILENT /SUPPRESSMSGBOXES /SP- /NORESTART /RESTARTEXITCODE=3010',
                       'msi': False, 'codes': '0|3010', 'key': child.get('app_id', ''),
                       'native64': child.get('architecture') in ('x64', 'arm64'),
-                      'dir': '{autopf}\\' + child.get('install_dir', safe_filename(child['name']) + '-' + child['role']).replace('{', '{{')})
+                      'subdir': install_dir,
+                      'dir': '{autopf}\\' + install_dir.replace('{', '{{')})
     lines += ['', '[Code]', _OUTER_CODE]
     assignments = []
     for index, task in enumerate(tasks):
@@ -281,9 +286,54 @@ def outer_script(name: str, version: str, children: list[dict], runtimes: list,
         assignments.append(f'  TaskCodes[{index}] := {pascal("|" + task["codes"] + "|")};')
         assignments.append(f'  TaskMSI[{index}] := {str(task["msi"]).lower()};')
         assignments.append(f'  TaskKeys[{index}] := {pascal(task["key"])};')
+        assignments.append(f'  TaskSubdirs[{index}] := {pascal(task["subdir"])};')
+        assignments.append(f'  TaskExisting[{index}] := False;')
         assignments.append(f'  TaskDirs[{index}] := ExpandConstant({pascal(task["dir"])});')
         if task['native64']:
             assignments.append(f'  if IsWin64 then TaskDirs[{index}] := ExpandConstant({pascal(task["dir"].replace("{autopf}", "{autopf64}", 1))});')
+    directory_tasks = [(index, task) for index, task in enumerate(tasks) if task['role']]
+    base_index = next((index for index, task in directory_tasks if task['role'] == 'C'),
+                      directory_tasks[0][0] if directory_tasks else 0)
+    directory_page = f'''  InstallDirPage := CreateInputDirPage(wpSelectComponents, '选择安装位置',
+    '选择安装根目录', '所选软件将分别安装到该目录下各自的产品子目录。', False, '');
+  InstallDirPage.Add('安装根目录：');
+  InstallDirPage.Values[0] := ExtractFileDir(TaskDirs[{base_index}]);
+  InitialInstallRoot := InstallDirPage.Values[0];
+  SelectedInstallRoot := InitialInstallRoot;
+  for I := 0 to GetArrayLength(TaskDirs) - 1 do
+    if (TaskRoles[I] <> '') and (not TaskExisting[I]) then
+      TaskDirs[I] := AddBackslash(InitialInstallRoot) + TaskSubdirs[I];
+'''
+    next_button = '''
+function NextButtonClick(CurPageID: Integer): Boolean;
+var I: Integer; NewRoot, NewDir: String;
+begin
+  Result := True;
+  if CurPageID <> InstallDirPage.ID then exit;
+  NewRoot := InstallDirPage.Values[0];
+  if NewRoot = '' then begin
+    MsgBox('请选择安装根目录。', mbError, MB_OK);
+    Result := False;
+    exit;
+  end;
+  for I := 0 to GetArrayLength(TaskDirs) - 1 do
+    if (TaskRoles[I] <> '') and WizardIsComponentSelected(TaskRoles[I]) then begin
+      NewDir := TaskDirs[I];
+      if NewRoot <> SelectedInstallRoot then
+        NewDir := AddBackslash(NewRoot) + TaskSubdirs[I];
+      if Length(NewDir) > 240 then begin
+        MsgBox('软件安装路径过长，请选择更短的安装根目录。', mbError, MB_OK);
+        Result := False;
+        exit;
+      end;
+    end;
+  if NewRoot <> SelectedInstallRoot then
+    for I := 0 to GetArrayLength(TaskDirs) - 1 do
+      if TaskRoles[I] <> '' then
+        TaskDirs[I] := AddBackslash(NewRoot) + TaskSubdirs[I];
+  SelectedInstallRoot := NewRoot;
+end;
+'''
     initialize = f'''procedure InitializeWizard;
 var I, ComponentIndex: Integer; Installed: String;
 begin
@@ -296,6 +346,8 @@ begin
   SetArrayLength(TaskKeys, {len(tasks)});
   SetArrayLength(TaskMSI, {len(tasks)});
   SetArrayLength(TaskDone, {len(tasks)});
+  SetArrayLength(TaskSubdirs, {len(tasks)});
+  SetArrayLength(TaskExisting, {len(tasks)});
 {chr(10).join(assignments)}
   ComponentIndex := 0;
   for I := 0 to GetArrayLength(TaskNames) - 1 do
@@ -303,25 +355,28 @@ begin
       Installed := FindInstalledPath(TaskKeys[I]);
       if Installed <> '' then begin
         TaskDirs[I] := Installed;
+        TaskExisting[I] := True;
         WizardForm.ComponentsList.ItemCaption[ComponentIndex] := WizardForm.ComponentsList.ItemCaption[ComponentIndex] + '（已安装）';
       end;
       ComponentIndex := ComponentIndex + 1;
     end;
+{directory_page}
   InstallLogDir := ExpandConstant('{{localappdata}}\\DesktopPackager\\InstallLogs\\') + GetDateTimeString('yyyymmdd-hhnnss', '-', ':');
   ForceDirectories(InstallLogDir);
   ProgressPage := CreateOutputProgressPage('正在安装所选软件', '');
 end;
 '''
-    lines.append(initialize)
+    lines.extend([initialize, next_button])
     return _script('\n'.join(lines) + '\n')
 
 
 _OUTER_CODE = r'''
 var
-  TaskFiles, TaskNames, TaskRoles, TaskParams, TaskCodes, TaskDirs, TaskKeys: TArrayOfString;
-  TaskMSI, TaskDone: array of Boolean;
+  TaskFiles, TaskNames, TaskRoles, TaskParams, TaskCodes, TaskDirs, TaskKeys, TaskSubdirs: TArrayOfString;
+  TaskMSI, TaskDone, TaskExisting: array of Boolean;
+  InstallDirPage: TInputDirWizardPage;
   ProgressPage: TOutputProgressWizardPage;
-  InstallLogDir, Summary, Failure: String;
+  InitialInstallRoot, SelectedInstallRoot, InstallLogDir, Summary, Failure: String;
   RestartRequired, RunningTask, CancelRequested: Boolean;
 
 function FindInstalledPath(const AppId: String): String;
@@ -389,8 +444,9 @@ begin
           if TaskMSI[I] then begin
             Params := '/i "' + Filename + '" ' + Params + ' /norestart REBOOT=ReallySuppress /L*v "' + LogFile + '"';
             Filename := ExpandConstant('{sys}\msiexec.exe');
-          end else if TaskRoles[I] <> '' then
-            Params := Params + ' /LOG="' + LogFile + '"';
+          end else if TaskRoles[I] <> '' then begin
+            Params := Params + ' /DIR="' + TaskDirs[I] + '" /LOG="' + LogFile + '"';
+          end;
           RecordResult('开始：' + TaskNames[I] + '；参数：' + Params);
           RunningTask := True;
           try

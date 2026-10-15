@@ -46,3 +46,11 @@ python -m pytest -q
 ```
 
 See [`qt_app/README.md`](qt_app/README.md) for the complete Chinese usage guide, and [`qt_app/DEPLOY_REPORT.md`](qt_app/DEPLOY_REPORT.md) for the latest build and verification evidence.
+
+## Installation behavior
+
+The outer installer displays one installation-root page. After a root is selected, each selected product is installed into its own subdirectory under that root, for example `D:\Apps\Product-C`. Existing products reuse their registered installation path unless the root is changed.
+
+A, B, and C are independent Inno Setup installations. Each product registers its own uninstall entry, writes an uninstaller into its installation directory, and adds an uninstall shortcut to its Start Menu group. Removing one product does not remove the others.
+
+Changing the root during an upgrade changes this installation's destination; it does not migrate or clean up the old directory. For an upgrade in place, keep the existing root. After a root change, the Windows uninstall entry points to the new installation; do not use the old directory's uninstaller.

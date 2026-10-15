@@ -43,12 +43,13 @@
 
 未运行真实目标软件或运行库安装。后续编译成功不能作为实际安装成功的证据。
 
-## 当前发布构建（DLL 选择、运行库容错与自定义图标）
+## 当前发布构建（安装路径、独立卸载与依赖缓存）
 
-- DLL 人工选择、哈希记录导入/导出、并行校验和缓存复用已实现；运行库失败/取消只记录警告并继续后续安装；总安装器支持人工选择 ICO 图标。最终完整测试 **128 passed in 34.41s**。
-- 真实 Inno 编译覆盖缓存辅助器、external/Hash 主软件子包及总包；两次完整夹具构建验证第二次命中缓存。没有执行安装器。
+- DLL 人工选择、哈希记录导入/导出、并行校验和缓存复用已实现；运行库失败/取消只记录警告并继续后续安装；总安装器支持人工选择 ICO 图标。最终完整测试 **132 passed in 43.90s**。
+- 总安装器提供安装根目录选择页，通过 `/DIR` 将各自的产品子目录传给所选 A/B/C 子安装器。各子安装器显式注册卸载项，并增加开始菜单卸载快捷方式。
+- 真实 Inno 编译覆盖缓存辅助器、external/Hash 主软件子包及总包；两次完整夹具构建验证第二次命中缓存。另运行无业务文件的 Inno 路径事件夹具，验证超长目录拦截、可选组件及返回修改路径；Windows 原生图标解析验证含逗号路径。未执行业务软件或 VC 安装。
 - 使用 Inno Setup 真实编译器额外验证 `SetupIconFile` 自定义图标总安装器脚本通过。
-- PyInstaller `--clean` 完整重建 EXE，冻结离屏冒烟及 Windows 原生截图均退出 0，新模块已检查包含。
-- EXE 为 2,452,409 字节；SHA-256 为 `539030dd71142826b0d852deedb5fddcdcb320aa9f563abe762d76326a100e12`。
-- ZIP 为 38,266,365 字节；SHA-256 为 `ce734c330c18b2f15703b053cc13a4b471c356dd943bd6995d33b351b250f0af`。CRC、内含 EXE/README 一致性通过。
-- Current release manifest tracks 30 source/test files and new module evidence; see `DLL依赖缓存-实现与验证.md` for detailed operations, verification, and boundaries.
+- 旧版程序运行中占用原输出目录，本轮使用 PyInstaller `--clean` 在 `dist/latest/DesktopPackager` 独立重建，再将新版 EXE 更新到 `dist/DesktopPackager/DesktopPackager.exe`。冻结离屏冒烟及 Windows 原生截图均退出 0，8 个核心/UI 模块的冻结代码与当前源码一致。
+- EXE 为 2,453,654 字节；SHA-256 为 `30810056fd893917acc6c6eb0c7b5e63ff0b767d30f5e5c54c0637ff14240985`。
+- ZIP 为 38,267,726 字节；SHA-256 为 `6a37221e25f1e10f3900cb3678d94814d1c139e1a9b29cceb872d26ac141b4b0`。CRC、内含 EXE/README 一致性通过。
+- 当前发布清单记录源码、测试及文档校验值；详细操作、验证证据与边界见 `DLL依赖缓存-实现与验证.md`。
