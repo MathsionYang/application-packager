@@ -1,0 +1,74 @@
+# 桌面软件安装包工坊（原生 Qt）
+
+本应用使用 PySide6 原生 Qt Widgets 实现安装包工坊，不依赖浏览器。界面提供功能软件 C、认证软件 A、引擎软件 B 的来源选择、运行环境列表、输出配置、构建日志、打包记录与设置。
+
+## 使用方式
+
+1. 在设置中选择 Inno Setup 的 `ISCC.exe`，默认位置为 `D:\PCAPP\Inno Setup 7\ISCC.exe`。
+2. 选择必需的功能软件 C，并按需要添加 A/B。可选择完整发布目录或主 EXE；选择主 EXE 时会包含其所在目录的全部文件，请使用干净的发布目录。存在多个候选入口时需明确选择入口。
+3. 可点击软件路径行的“依赖文件”，在全部文件中人工勾选 DLL；支持搜索、筛选、批量选择、导入和保存哈希记录。不选择 DLL 时沿用完整主包。
+4. 添加所需环境安装包（EXE/MSI），调整顺序并检查每个包的安装参数。
+5. 设置套装名称、版本和输出目录，然后开始打包。输出目录不能与软件来源目录互相包含。
+6. 查看实际编译日志与历史记录。构建在后台执行，可以取消。
+
+打包时直接从所选 A/B/C 发布目录读取文件，不复制完整软件目录。每次构建仅对人工勾选的 DLL 并行计算 SHA-256，默认 2 线程，可在设置中调整为 1–8。其他文件只建立元数据索引，编译后检查文件集合与元数据；打包期间请保持发布目录不变。
+
+所选 DLL 的路径、内容及打包规则一致，并且缓存 EXE 校验通过时，复用已有依赖子包；任一成员变化会重建该软件的整个依赖子包。主包和总包仍需生成，外层不再重复压缩已压缩的子包。缓存默认保存在 `%LOCALAPPDATA%\DesktopPackager\cache\dependencies`。
+
+“保存记录”会校验当前所选 DLL。首次保存为选择记录；成功构建后再打开依赖窗口保存，可导出 JSON 和同名 `.files` 文件夹（含可复用依赖 EXE），迁移时一起复制。仅导入记录不会提前哈希，正式构建仍重新计算所选 DLL 的 SHA。JSON 和缓存应放在软件源目录之外。
+
+依赖子包是透明解压辅助器：安装时先解压到临时目录，再由原软件安装器按原相对路径复制并校验 SHA。DLL 继续由原软件管理升级和卸载，不新增依赖产品卸载入口；临时磁盘需要容纳解压后的 DLL。最终总安装包包含完整文件，可独立交付。
+
+Qt 安装预览按钮和界面已移除。实际生成的安装器使用 Inno Setup 原生 modern 向导。
+
+生成的总安装器先执行环境包，再安装 C 和用户选择的 A/B。VC 等运行环境是可选前置步骤：环境安装器启动失败、返回失败/取消码，或用户在环境安装器窗口中取消时，总包记录警告并继续后续环境包及软件安装；C/A/B 软件自身安装失败仍会停止后续软件。软件分别具有安装目录、快捷方式、产品标识与卸载入口。运行环境由其自身安装器管理，总包不负责卸载共享运行库。
+
+在“安装包输出”区域可以人工选择 `.ico` 图标。图标会写入总安装器的 `SetupIconFile`，不选择时使用 Inno Setup 默认图标。图标文件必须可读，并且不能位于软件源目录或输出目录中。
+
+**环境包参数必须按供应商文档确认。** MSI 通常使用 `/qn /norestart`，EXE 没有通用静默参数：`/S`、`/silent`、`/quiet` 等不能互相替代。程序提供的默认值只是起点；错误参数可能弹出交互界面或导致安装失败。返回码 3010 通常表示安装成功但需要重启，实际行为仍由供应商安装器决定。
+
+构建器阻止自身生成的子安装器和 MSI 流程自动重启。第三方 EXE 的重启行为必须通过该供应商支持的禁止重启参数控制，未知安装器不能保证遵守通用参数。
+
+## 源码运行（Windows）
+
+推荐 Python 3.13。在本目录执行：
+
+```powershell
+py -3.13 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe main.py
+```
+
+也可双击 `launch.bat`。它可从任意当前目录启动，依次使用已构建的 EXE、本目录 `.venv`、系统 `py -3.13`。开发时需始终运行最新源码，可直接使用上面的 Python 命令。
+
+配置、最近 30 条构建记录及稳定产品标识默认保存在 `%LOCALAPPDATA%\DesktopPackager`。升级同一软件时保留该数据目录，以便继续使用原有产品标识。可用 `--data-dir` 指定独立数据目录。损坏配置会保留原文件并安全回退。
+
+## 构建独立可执行程序
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\build.ps1 -InstallDependencies
+```
+
+脚本优先使用 `.venv`，其次选择 `py -3.13`；也可传入 `-Python 'C:\路径\python.exe'`。构建为无控制台的 onedir GUI 应用，保留完整目录：
+
+```text
+dist\DesktopPackager\
+  DesktopPackager.exe
+  _internal\...
+```
+
+将整个 `DesktopPackager` 文件夹复制到其他 Windows 电脑，即可运行，无需安装 Python。不能只复制 EXE。`build` 和 `dist` 为构建产物目录，脚本不会对外部目录执行清理。
+
+Inno Setup 只需安装在**执行打包的电脑**；运行已生成安装包的目标电脑不需要 Python、Qt 或 Inno Setup。目标软件自身所需的运行环境仍须由正确的环境包提供。
+
+## 验证与边界
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe main.py --smoke-test --data-dir .\qa-artifacts\data
+.\.venv\Scripts\python.exe main.py --screenshot-dir .\qa-artifacts\screenshots --data-dir .\qa-artifacts\data
+```
+
+冒烟命令使用 Qt 离屏渲染并自动退出；截图命令在 Windows 上短暂显示原生窗口后保存 `workbench.png` 并退出，以保留中文字体的正确显示。两者不会构建或运行任何安装器。
+
+编译验证与界面冒烟测试不等于目标软件安装验收。开发过程中未执行真实业务软件或运行库的目标安装；交付前应在独立测试机验证实际发布目录、静默参数、依赖顺序、失败处理、升级、卸载和重启行为。当前验证证据见 `DEPLOY_REPORT.md`。

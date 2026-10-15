@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>安装包工坊 · HTML 交互原型</title>
+  <style>
+@charset "UTF-8";
+:root{--blue:#3965ee;--blue-hover:#2a53d4;--blue-soft:#edf2ff;--ink:#202b42;--muted:#8590a4;--line:#e8ecf2;--bg:#f5f7fb;--green:#299c7d;--red:#d95362;--shadow:0 3px 14px #202b4204;--radius:12px;font-family:"Segoe UI","Microsoft YaHei UI","Microsoft YaHei",sans-serif;color:var(--ink);font-size:13px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg)}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.45}button,input,textarea,select{outline:none}button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid #3965ee55;outline-offset:3px}input:focus,textarea:focus,select:focus{border-color:#8aa4f5;box-shadow:0 0 0 3px #3965ee0c}button{transition:background .16s,border-color .16s,transform .16s}button:active:not(:disabled){transform:translateY(1px)}svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}.svg-library{position:absolute;width:0;height:0;overflow:hidden}[hidden]{display:none!important}h1,h2,h3,p{margin:0}a{color:inherit;text-decoration:none}input,textarea,select{border:1px solid var(--line);border-radius:7px;padding:10px 12px;background:#fff;color:var(--ink);transition:border-color .15s;min-width:0}input::placeholder,textarea::placeholder{color:#a6aebd}input{width:100%}textarea{width:100%;resize:vertical;line-height:1.6}input[type=checkbox]{width:17px;height:17px;padding:0;accent-color:var(--blue);box-shadow:none}::selection{background:#dce6ff}::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-thumb{background:#d3d9e4;border-radius:4px}
+.app-shell{display:grid;grid-template-columns:208px minmax(0,1fr);height:100vh;min-height:620px}.sidebar{background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:29px 17px 18px}.brand{display:flex;align-items:center;gap:11px;padding:0 8px;font-size:18px;font-weight:650;letter-spacing:.5px;white-space:nowrap}.brand-icon{height:38px;width:38px;display:grid;place-items:center;background:var(--blue);color:#fff;border-radius:10px;box-shadow:0 4px 10px #3965ee25}.brand-icon svg{width:25px;height:25px}.brand small{display:block;font-size:8px;font-weight:500;letter-spacing:1.65px;color:#9aa3b2;margin-top:5px}.nav-label{font-size:10px;letter-spacing:1.3px;color:#a0a8b6;margin:45px 14px 15px}nav{display:grid;gap:7px}.nav-item{width:100%;border:0;display:flex;align-items:center;gap:12px;background:transparent;color:#788398;text-align:left;padding:13px 14px;border-radius:8px;font-weight:500}.nav-item svg{width:18px;height:18px}.nav-item:hover{background:#f7f9fc}.nav-item.active{background:var(--blue-soft);color:var(--blue);font-weight:600}.nav-active-dot{height:5px;width:5px;border-radius:50%;background:var(--blue);margin-left:auto}.nav-count{font-size:10px;background:#f0f3f7;border-radius:4px;padding:2px 6px;margin-left:auto}.sidebar-bottom{margin-top:auto}.engine-card{display:flex;align-items:center;gap:10px;padding:16px 9px;border-top:1px solid var(--line)}.engine-icon{height:33px;width:33px;display:grid;place-items:center;border-radius:8px;background:#f1f4f9;color:#76849c}.engine-card strong{font-size:11px;font-weight:600;display:block}.engine-card div>span{display:flex;gap:5px;align-items:center;color:#99a2b0;font-size:10px;margin-top:5px}.dot{background:var(--green);border-radius:50%;height:5px;width:5px}.sidebar-help{display:flex;align-items:center;gap:8px;background:none;border:0;color:#8792a5;padding:10px;font-size:11px;width:100%}.sidebar-help svg{width:15px;height:15px}.sidebar-help .tiny{margin-left:auto;width:13px}.sidebar-foot{padding:13px 10px 0;color:#b1b8c4;font-size:9px;display:flex;justify-content:space-between}.app-content{display:flex;flex-direction:column;overflow:hidden}.topbar{height:70px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 35px;background:#ffffffc7;border-bottom:1px solid var(--line)}.breadcrumb{display:flex;gap:13px;align-items:center;color:#94a0b3;font-size:11px}.breadcrumb span{color:#cbd1db}.breadcrumb strong{color:#515f77;font-weight:500}.topbar-right{display:flex;align-items:center;gap:20px}.prototype-badge{display:inline-flex;align-items:center;gap:6px;border-radius:5px;background:#f1f3f8;color:#8892a7;padding:5px 8px;font-size:10px;font-weight:500}.prototype-badge>span{height:5px;width:5px;background:#929fba;border-radius:50%}.local-label{font-size:10px;color:#a4adbc}.avatar{height:29px;width:29px;background:#e9edf6;color:#7887a4;display:grid;place-items:center;font-size:11px;font-weight:650;border:2px solid #fff;border-radius:50%}.main-scroll{flex:1;overflow:auto;padding:30px 35px 0}.page{max-width:1420px;margin:0 auto}.page-heading{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}.eyebrow{font-size:9px;letter-spacing:2px;color:#8d9ab0;font-weight:600;margin-bottom:9px}h1{font-size:25px;letter-spacing:.2px;line-height:1.4;font-weight:650}.page-heading p{color:#8994a8;font-size:11px;margin-top:8px;line-height:1.6}.heading-actions{display:flex;align-items:center;gap:10px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:7px;padding:10px 15px;line-height:18px;white-space:nowrap;font-size:11px;font-weight:500;border:1px solid transparent;background:transparent;color:#718098}.btn svg{width:16px;height:16px}.btn-white{background:#fff;border-color:#e1e6ef;color:#5a6881;box-shadow:0 1px 2px #202b4203}.btn-white:hover{border-color:#bccaf1;background:#f9faff}.btn-primary{background:var(--blue);color:#fff;box-shadow:0 3px 6px #3965ee18}.btn-primary:hover{background:var(--blue-hover)}.btn-primary>svg:last-child:not(:first-child){margin-left:7px;width:15px}.btn-text:hover{background:#eaf0fa;color:var(--blue)}.btn-link{padding:5px 0;color:var(--blue)}.btn-small{font-size:10px;padding:5px 10px;gap:5px}.btn-small svg{height:14px;width:14px}.icon-btn{display:inline-grid;place-items:center;background:none;border:0;border-radius:5px;width:27px;height:27px;padding:5px;color:#99a3b4}.icon-btn svg{height:15px;width:15px}.icon-btn:hover{background:#edf2fa;color:var(--blue)}.workspace-grid{display:grid;grid-template-columns:minmax(0,1fr) 273px;gap:22px;align-items:start}.form-stack{display:grid;gap:18px}.panel{background:#fff;border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.section-heading>div{display:flex;gap:9px;align-items:center}.section-heading h2,.summary-title h2{font-size:12px;font-weight:650;letter-spacing:.25px}.step-marker{font:600 10px "Segoe UI",sans-serif;color:#9eacc6;padding:3px 5px;border-radius:4px;background:#f2f5fa}.section-hint{color:#a2abbb;font-size:9px}.software-panel{padding:20px 22px 0}.software-row{display:flex;gap:13px;padding:0 0 17px}.software-row+.software-row{padding-top:17px;border-top:1px solid #f1f3f7}.software-icon{height:36px;width:36px;display:grid;place-items:center;border-radius:9px;margin-top:1px;flex-shrink:0}.software-icon svg{width:20px;height:20px}.blue{background:#edf2ff;color:#5075e9}.amber{background:#fff6e8;color:#c49a54}.teal{background:#eaf7f4;color:#5b9e91}.software-fields{flex:1;min-width:0}.field-heading{display:flex;gap:8px;align-items:center;margin-bottom:9px}.field-heading label{font-weight:600;font-size:11px;letter-spacing:.2px}.field-heading label span{color:#8f9bb1;font-size:10px;font-weight:500;margin-left:3px}.tag{display:inline-flex;align-items:center;white-space:nowrap;font-size:8px;padding:3px 5px;border-radius:4px;font-weight:500;line-height:1.2}.tag-blue{background:#edf2ff;color:#6483df}.tag-gray{background:#f3f5f8;color:#9aa4b4}.tag-green{background:#eaf8f1;color:#36a27c}.tag-red{background:#fff0f1;color:#cb5f6c}.field-status{color:#a6afbf;font-size:9px;margin-left:auto}.field-status.configured{color:var(--green)}.path-control{display:flex;align-items:center;border:1px solid #e5eaf2;border-radius:7px;background:#fbfcfe;overflow:hidden;transition:border-color .15s}.path-control:focus-within{border-color:#8aa4f5;box-shadow:0 0 0 3px #3965ee0c}.path-control input{border:0;border-radius:0;background:none;font-size:11px;box-shadow:none!important;padding:10px 11px;min-width:0;flex:1;font-family:inherit}.path-control.invalid{border-color:#e8919c;background:#fffafb}.btn-browse{border:0;border-left:1px solid #e5eaf2;background:#fff;border-radius:0;color:#7d8ba3;padding:8px 11px;margin:0;font-size:10px}.btn-browse:hover{background:#f2f5fd;color:var(--blue)}.btn-browse svg{height:14px;width:14px}.field-error{color:var(--red);font-size:10px;line-height:1.5;display:block}.field-error:not(:empty){margin-top:6px}.panel-note{display:flex;gap:7px;align-items:center;border-top:1px solid #f0f3f7;padding:11px 0;color:#a1aabb;font-size:9px}.panel-note svg{height:13px;width:13px}.runtime-panel,.output-panel{padding:20px 22px}.runtime-panel .section-heading{margin-bottom:8px}.count-pill{font-size:9px;line-height:16px;min-width:18px;text-align:center;border-radius:5px;color:#9aa6ba;background:#f0f3f8}.section-description{font-size:10px;color:#9aa5b6;margin-bottom:16px}.runtime-empty{border:1px dashed #e1e7f1;background:#fbfcfe;border-radius:8px;display:flex;align-items:center;gap:12px;padding:19px 15px}.empty-icon{color:#a5b4d0}.empty-icon svg{width:28px;height:28px;stroke-width:1.3}.runtime-empty strong{font-size:10px;font-weight:500;color:#8a97af}.runtime-empty p{font-size:9px;color:#acb4c3;margin-top:5px}.runtime-empty>.btn{font-size:9px;margin-left:auto}.runtime-empty .btn svg{height:12px;width:12px}.runtime-order-note{display:flex;gap:6px;align-items:center;font-size:9px;color:#8b9cb4;margin-top:12px;line-height:1.5}.runtime-order-note svg{height:13px;width:13px}.runtime-item{border:1px solid var(--line);border-radius:8px;margin-top:9px;padding:12px 12px 10px;animation:fade-in .2s}.runtime-main{display:flex;align-items:center;gap:9px}.runtime-file-icon{height:30px;width:30px;background:#f0f4fc;color:#7e95c2;border-radius:6px;display:grid;place-items:center}.runtime-file-icon svg{width:17px;height:17px}.runtime-info{min-width:0;flex:1}.runtime-name{font-size:10px;font-weight:600;display:flex;align-items:center;gap:6px}.runtime-name strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.runtime-path{margin-top:4px;color:#a5aebf;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.runtime-controls{display:flex;gap:1px}.runtime-controls .icon-btn{width:22px;height:24px}.runtime-controls .remove:hover{color:var(--red);background:#fff0f1}.runtime-params{padding-left:39px;margin-top:8px}.runtime-params summary{font-size:9px;color:#97a5bd;cursor:pointer;list-style:none;display:flex;align-items:center;gap:5px}.runtime-params summary svg{height:11px;width:11px;margin-left:auto}.runtime-params input{margin-top:8px;font:10px Consolas,"Microsoft YaHei UI",monospace;padding:8px;width:100%;background:#fbfcfe}.runtime-params p{font-size:9px;color:#a2acbc;line-height:1.7;margin-top:6px}.input-label{display:block;font-size:10px;color:#7d8ba2;font-weight:500;margin-bottom:8px}.required-star{color:#9fb2e9}.input-prefix{padding-left:12px;color:#a3b0c7}.input-prefix svg{height:15px;width:15px}.advanced{border-top:1px solid #f0f3f7;margin-top:16px;padding-top:12px}.advanced>summary{list-style:none;cursor:pointer;font-size:10px;color:#929fb6;display:flex;align-items:center;gap:8px}.advanced>summary>svg{width:12px;height:12px}.advanced[open]>summary>svg{transform:rotate(180deg)}.advanced-fields{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-top:15px}.advanced-fields input{font-size:11px;padding:9px 11px;background:#fbfcfe}.summary-column{position:sticky;top:0}.summary-panel{padding:22px 20px 0}.summary-title{display:flex;align-items:center;justify-content:space-between}.soft-icon{background:#f3f6fb;color:#8ca0c1;border-radius:7px;height:27px;width:27px;display:grid;place-items:center}.soft-icon svg{width:16px;height:16px}.summary-subtitle{font-size:10px;color:#9ca6b9;margin-top:8px;margin-bottom:27px}.summary-label{display:flex;justify-content:space-between;color:#a3aec0;font-size:9px;letter-spacing:.3px;margin-bottom:12px}.summary-label>span{font-size:9px;color:#aab5c8}.software-summary-item{display:flex;gap:10px;align-items:center;margin:14px 0}.role-letter{height:25px;width:25px;display:grid;place-items:center;font-size:10px;font-weight:600;border-radius:6px;background:#edf2fe;color:#6487ed}.software-summary-item.missing .role-letter{background:#f3f5f9;color:#bbc4d4}.software-summary-item>div{flex:1}.software-summary-item strong{font-size:10px;font-weight:500}.software-summary-item.missing strong{color:#a9b1bf}.software-summary-item small{display:block;color:#aeb7c7;font-size:8px;margin-top:4px}.software-summary-item>svg{color:#6ba99a;width:13px;height:13px}.summary-divider{height:1px;background:#eef1f6;margin:21px 0}.flow-item{display:flex;gap:10px;position:relative;padding:2px 0 17px}.flow-item+.flow-item{padding-bottom:0}.flow-item:first-of-type:after{content:"";position:absolute;left:10px;top:24px;bottom:0;width:1px;background:var(--line)}.flow-number{border:1px solid #e5ebf7;background:#fafbfe;height:21px;width:21px;border-radius:50%;font-size:9px;color:#9aafd3;display:grid;place-items:center;flex-shrink:0}.flow-item strong{font-size:10px;font-weight:500}.flow-item p{color:#a6b0c1;font-size:9px;line-height:1.6;margin-top:5px}.artifact-preview{display:flex;gap:8px;align-items:flex-start;background:#f8fafd;border:1px solid #edf1f7;border-radius:6px;padding:10px;color:#8ca0bd}.artifact-preview svg{width:15px;height:15px}.artifact-preview>span{font-size:9px;line-height:1.65;word-break:break-all;color:#8190a9}.summary-foot{border-top:1px solid #eef1f7;margin:21px -20px 0;padding:12px 14px;display:flex;align-items:center;justify-content:center;gap:5px;background:#fcfdff;border-radius:0 0 var(--radius) var(--radius);font-size:8px;color:#97a8c2}.summary-foot svg{width:12px;height:12px}.prototype-note{display:flex;align-items:flex-start;gap:8px;color:#a3adbf;margin:16px 5px}.prototype-note svg{width:14px;height:14px;margin-top:1px}.prototype-note p{font-size:9px;line-height:1.9}.action-bar{position:sticky;bottom:0;z-index:3;background:#f5f7fbeb;backdrop-filter:blur(12px);border-top:1px solid #e6ebf3;display:flex;justify-content:space-between;align-items:center;gap:15px;padding:17px 0;margin-top:24px}.readiness{display:flex;gap:9px;align-items:center}.readiness-icon{height:29px;width:29px;background:#eef2f8;color:#8ea0bc;display:grid;place-items:center;border-radius:50%}.readiness-icon.ready{background:#e7f5ee;color:#4ea687}.readiness-icon svg{width:16px;height:16px}.readiness strong{font-size:10px;font-weight:500;display:block}.readiness div>span{font-size:9px;color:#9eabbd;display:block;margin-top:4px}.action-buttons{display:flex;gap:9px;align-items:center}.action-buttons>.btn-primary{padding:11px 18px}.action-buttons .btn{font-size:10px}.build-console{margin-top:18px;overflow:hidden}.console-heading{display:flex;justify-content:space-between;align-items:center;padding:14px 17px}.console-heading>div{display:flex;gap:8px;align-items:center;color:#8a9ab6}.console-heading h2{font-size:11px;color:#64748f;font-weight:500}.console-heading>div>svg{height:15px;width:15px}.build-progress{height:3px;background:#edf2fc}.build-progress>div{background:var(--blue);width:0;height:100%;transition:width .25s}.build-stage{display:flex;justify-content:space-between;padding:11px 17px;color:#93a0b6;font-size:9px}.build-stage strong{color:#6e8ce2;font-size:10px}.console-lines{background:#f9fbfe;border-top:1px solid #eef2f7;max-height:175px;overflow:auto;padding:12px 17px;display:grid;gap:7px;font-size:9px;color:#8090ab;line-height:1.6;font-family:Consolas,"Microsoft YaHei UI",monospace}.log-line time{color:#afb9ca;margin-right:10px}.log-line.error{color:var(--red)}.log-line.success{color:var(--green)}.settings-layout{display:grid;gap:22px;max-width:850px}.settings-card{padding:24px}.settings-card .input-help{font-size:11px;line-height:1.8;color:#9aa6b8;margin-top:14px}.settings-footer{border-top:1px solid var(--line);margin-top:25px;padding-top:17px;display:flex;justify-content:space-between}.phase-line{display:flex;gap:12px;align-items:center;padding:15px 0}.phase-line+.phase-line{border-top:1px solid #f0f3f8}.phase-line>span:first-child{height:27px;width:27px;display:grid;place-items:center;border-radius:50%;font-size:11px;flex-shrink:0}.phase-check{color:var(--green);background:#edf8f3}.phase-current{color:var(--blue);background:var(--blue-soft)}.phase-next{color:#a8b1bf;background:#f3f5f8}.phase-line strong{font-size:11px;font-weight:500}.phase-line p{color:#9da8ba;font-size:10px;margin-top:5px}.phase-line>.tag{margin-left:auto}.history-empty{text-align:center;padding:75px 20px}.history-empty>svg{width:45px;height:45px;stroke-width:1;color:#a9b9d9}.history-empty h3{font-size:15px;font-weight:500;margin:20px 0 9px}.history-empty p{font-size:11px;color:#a0abbd;margin-bottom:20px}.history-table{width:100%;border-collapse:collapse;table-layout:fixed}.history-table th{font-size:10px;text-align:left;color:#a2adc0;font-weight:500;padding:16px 20px;border-bottom:1px solid var(--line)}.history-table td{padding:17px 20px;border-bottom:1px solid #f1f4f8;font-size:10px;color:#8f9db3}.history-table tr:last-child td{border:0}.history-name{color:#53627e!important;overflow-wrap:anywhere}.history-table small{display:block;font-size:9px;color:#a5b0c3;margin-top:6px}.history-table .btn{font-size:9px;padding:5px 8px}
+dialog{border:1px solid #e3e8f2;border-radius:15px;padding:0;background:#fff;box-shadow:0 25px 100px #172a4e30;color:var(--ink);max-height:calc(100vh - 40px)}dialog::backdrop{background:#17294355;backdrop-filter:blur(5px)}.picker-dialog,.detail-dialog{width:560px;max-width:calc(100vw - 32px);padding:25px}.dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:15px}.dialog-heading h2{font-size:18px;font-weight:600;margin-top:6px}.dialog-eyebrow{font-size:9px;letter-spacing:1px;color:#9aa7bc}.dialog-description{color:#9aa6b8;font-size:11px;margin-top:13px;line-height:1.8}.picker-location{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:6px;background:#f8fafd;margin-top:20px;padding:10px 12px;color:#8c9ab3;font-size:10px}.picker-location svg{height:15px;width:15px}.picker-location>.tag{margin-left:auto}.picker-choices{display:grid;gap:5px;padding:12px 0}.picker-choice{display:flex;gap:11px;align-items:center;border:1px solid transparent;border-radius:7px;padding:13px 10px;text-align:left;background:#fff;width:100%;color:#6883b1;cursor:pointer}.picker-choice:hover{background:#f7f9fe}.picker-choice.selected{background:#edf3ff;border-color:#d6e3ff}.picker-choice>svg{width:22px;height:22px}.picker-choice>div{min-width:0;flex:1}.picker-choice strong{display:block;font-size:11px;font-weight:500;color:#64748e}.picker-choice small{font-size:9px;color:#9eabc1;display:block;margin-top:4px}.picker-manual{padding:14px 0 0;border-top:1px solid var(--line)}.picker-manual input{font-size:11px}.picker-manual textarea{font-size:10px}.dialog-footer{display:flex;justify-content:flex-end;gap:10px;padding-top:22px}.detail-dialog{width:650px}.detail-description{color:#929fb4;font-size:11px;line-height:1.9;margin:19px 0}.detail-row{display:flex;gap:20px;padding:13px 0;border-bottom:1px solid #f0f3f8;font-size:11px}.detail-row>span:first-child{color:#9ba7bb;min-width:95px}.detail-row>span:last-child{color:#64738e;overflow-wrap:anywhere}.detail-note{font-size:10px;line-height:1.8;color:#9da9bd;background:#f7f9fd;border:1px solid #edf1f8;border-radius:7px;padding:13px;margin-top:17px}.detail-action{margin-top:17px}.installer-dialog{width:920px;max-width:calc(100vw - 32px);overflow:hidden}.installer-shell{display:grid;grid-template-columns:235px minmax(0,1fr);height:min(650px,calc(100vh - 42px));min-height:500px}.installer-sidebar{background:#254fc8;position:relative;overflow:hidden;color:#fff;padding:30px 26px;display:flex;flex-direction:column}.installer-sidebar:after{position:absolute;content:"";height:350px;width:350px;border:1px solid #ffffff07;top:20px;left:-190px;border-radius:50%;pointer-events:none}.installer-brand{display:flex;align-items:center;gap:9px;font-size:12px;font-weight:500;color:#e2e9ff}.installer-brand svg{width:21px;height:21px}.installer-side-art{position:relative;display:grid;place-items:center;height:130px;margin:30px 0 15px;color:#c3d3ff}.installer-side-art>svg{width:69px;height:69px;stroke-width:.9;transform:rotate(-8deg);z-index:1}.art-orbit{position:absolute;border:1px solid #ffffff16;width:111px;height:111px;border-radius:26px;transform:rotate(25deg)}.orbit-two{height:93px;width:93px;transform:rotate(-10deg);background:#ffffff04}.installer-sidebar h2{font-size:24px;font-weight:550;line-height:1.7;letter-spacing:1px}.installer-sidebar>p{font-size:10px;color:#aebff0;line-height:1.9;margin-top:10px}.installer-steps{display:grid;gap:19px;margin-top:34px;font-size:10px;color:#a2b7f0}.installer-steps>div{display:flex;align-items:center;gap:9px}.installer-steps span{display:grid;place-items:center;border:1px solid #ffffff30;height:21px;width:21px;border-radius:50%;font-size:9px}.installer-steps .current{color:#fff}.installer-steps .current span{color:#2e59d1;background:#fff;border-color:#fff}.installer-steps .done span{color:#d8e5ff;background:#ffffff20}.installer-side-foot{margin-top:auto;font-size:9px;letter-spacing:.4px;color:#9db4f0;padding-top:22px}.installer-main{display:flex;flex-direction:column;min-width:0}.installer-top{display:flex;align-items:center;justify-content:space-between;padding:17px 23px 5px}.installer-body{padding:17px 30px 22px;overflow:auto;flex:1}.installer-body h2{font-size:21px;font-weight:600;line-height:1.5}.installer-body>.intro{font-size:11px;color:#9ba6b9;line-height:1.8;margin:8px 0 23px}.install-choice{display:flex;align-items:center;gap:12px;border:1px solid var(--line);padding:15px 14px;border-radius:9px;cursor:pointer;margin-top:10px}.install-choice.selected{border-color:#d0ddff;background:#f8faff}.install-choice .software-icon{height:33px;width:33px;margin:0}.install-choice .software-icon svg{width:18px;height:18px}.install-choice>div:nth-child(3){flex:1}.install-choice strong{font-size:12px;font-weight:550}.install-choice p{font-size:10px;color:#9eaac0;margin-top:5px}.install-choice .tag{font-size:9px}.install-choice input:disabled{opacity:.8}.installer-environments{margin-top:22px;border-radius:8px;background:#f7f9fd;padding:14px 15px;border:1px solid #edf1f8}.installer-environments h3{display:flex;align-items:center;gap:7px;font-size:10px;color:#7b8faa;font-weight:500}.installer-environments h3 svg{height:14px;width:14px}.installer-environments p{font-size:10px;color:#9ba9be;line-height:1.8;margin:7px 0 0}.environment-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.environment-chips span{font-size:9px;padding:4px 6px;background:#fff;border:1px solid #e4eaf5;color:#899cb9;border-radius:4px;overflow-wrap:anywhere}.preview-scenario{margin-top:18px;display:flex;justify-content:space-between;align-items:center;color:#a0acc1;font-size:9px}.preview-scenario select{font-size:9px;padding:5px 8px;color:#8a9bb6;background:#fbfcfe;max-width:200px}.installer-footer{padding:17px 23px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);gap:10px;background:#fcfdff}.installer-footer>div{display:flex;gap:8px}.installer-footer-note{color:#abb5c6;font-size:9px}.installer-footer .btn{font-size:10px;padding:9px 15px}.install-summary-group{padding:15px 0;border-top:1px solid #edf1f7}.install-summary-group h3{font-size:10px;color:#8fa0ba;font-weight:500;margin-bottom:10px;display:flex;align-items:center;gap:7px}.install-summary-group h3 svg{height:15px;width:15px}.install-summary-item{display:flex;gap:10px;align-items:center;padding:9px 0;font-size:11px;color:#6a7a96}.install-summary-item>svg{height:15px;width:15px;color:#a6b5cf}.install-summary-item small{display:block;font-size:9px;color:#a6b0c3;margin-top:5px}.install-summary-item>span:last-child{margin-left:auto;font-size:9px;color:#aab4c7}.install-progress-track{height:6px;border-radius:8px;background:#edf2fb;overflow:hidden;margin:25px 0 15px}.install-progress-track>div{background:var(--blue);height:100%;width:0;transition:width .2s}.install-status-line{display:flex;justify-content:space-between;gap:10px;font-size:10px;color:#9ba9c0}.install-status-line strong{color:var(--blue);font-size:11px}.install-tasks{margin-top:23px}.install-task{display:flex;gap:11px;align-items:center;padding:11px 0;border-bottom:1px solid #f0f3f8;font-size:11px;color:#9baac0}.install-task>span:first-child{height:21px;width:21px;border-radius:50%;background:#f1f4f9;display:grid;place-items:center;color:#abb7ca;font-size:9px}.install-task .task-status{margin-left:auto;font-size:9px}.install-task.running{color:#6988df}.install-task.running>span:first-child{background:#ecf1ff;color:var(--blue)}.install-task.done>span:first-child{background:#eaf8f1;color:var(--green)}.install-task.done .task-status{color:var(--green)}.install-task.failed>span:first-child{background:#fff0f1;color:var(--red)}.install-task.failed .task-status{color:var(--red)}.install-result-icon{height:57px;width:57px;display:grid;place-items:center;background:#eaf8f1;color:var(--green);border-radius:50%;margin:6px 0 20px}.install-result-icon svg{width:27px;height:27px}.install-result-icon.failed{background:#fff0f1;color:var(--red)}.install-result-list{margin:20px 0}.install-result-item{display:flex;align-items:center;gap:9px;font-size:11px;color:#7e8fa9;padding:9px 0}.install-result-item>svg{height:15px;width:15px;color:var(--green)}.install-result-item.failed>svg{color:var(--red)}.install-result-item.pending{color:#adb6c4}.toast{display:flex;align-items:center;gap:8px;position:fixed;left:calc(50% + 90px);bottom:28px;transform:translate(-50%,15px);background:#263852;color:#fff;padding:12px 20px;border-radius:9px;box-shadow:0 8px 30px #20325220;z-index:100;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;font-size:11px;max-width:90vw}.toast.visible{opacity:1;transform:translate(-50%,0)}.toast svg{height:15px;width:15px;color:#a9e7ce}
+@keyframes fade-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1500px){.main-scroll{padding:37px 52px 0}.topbar{padding:0 52px}.workspace-grid{grid-template-columns:minmax(0,1fr) 305px;gap:26px}.software-panel,.runtime-panel,.output-panel{padding-left:27px;padding-right:27px}.software-row{padding-bottom:21px}.software-row+.software-row{padding-top:21px}.summary-panel{padding:25px 23px 0}.summary-foot{margin-left:-23px;margin-right:-23px}.page-heading{margin-bottom:30px}.form-stack{gap:20px}}
+@media(max-width:1150px){.app-shell{grid-template-columns:180px minmax(0,1fr)}.sidebar{padding:27px 12px 17px}.brand{font-size:16px;gap:9px;padding:0 3px}.brand-icon{width:33px;height:33px}.brand small{font-size:7px;letter-spacing:1px}.main-scroll{padding:25px 24px 0}.topbar{padding:0 24px}.workspace-grid{grid-template-columns:minmax(0,1fr) 236px;gap:16px}.software-panel,.runtime-panel,.output-panel{padding-left:17px;padding-right:17px}.summary-panel{padding:20px 16px 0}.summary-foot{margin-left:-16px;margin-right:-16px;font-size:7px}.section-hint{font-size:8px}.page-heading h1{font-size:22px}.heading-actions{gap:5px}.heading-actions .btn{font-size:10px;padding:9px 10px}.action-buttons{gap:5px}.action-buttons>.btn{padding:9px 11px}.readinessText{max-width:150px}.runtime-empty{padding:17px 11px}.runtime-empty>.btn{font-size:8px}.software-row{gap:10px}}
+@media(max-width:950px){.workspace-grid{grid-template-columns:minmax(0,1fr)}.summary-column{position:static;display:grid;grid-template-columns:minmax(0,1fr) 180px;gap:15px;align-items:start}.summary-panel{padding-bottom:10px}.summary-subtitle{margin-bottom:17px}.summary-foot{margin-bottom:-10px}.heading-actions .btn-text{font-size:0;padding:9px}.heading-actions .btn-text svg{width:17px;height:17px}.readinessText{max-width:none}.action-buttons #importConfig{font-size:0;padding:9px}.action-buttons #importConfig svg{height:17px;width:17px}.installer-dialog{width:850px}.installer-shell{grid-template-columns:210px minmax(0,1fr)}.installer-sidebar{padding:27px 21px}.installer-body{padding-left:24px;padding-right:24px}.installer-sidebar h2{font-size:22px}.history-table th,.history-table td{padding:14px 12px}}
+@media(max-width:680px){.app-shell{grid-template-columns:63px minmax(0,1fr);min-height:500px}.sidebar{padding:20px 8px 15px}.brand{padding:0;justify-content:center}.brand>span:last-child,.nav-label,.nav-item .nav-active-dot,.nav-count,.sidebar-bottom{display:none}.brand-icon{height:34px;width:34px}.sidebar nav{margin-top:30px;gap:12px}.nav-item{font-size:0;padding:12px;justify-content:center;gap:0}.nav-item svg{height:19px;width:19px}.topbar{padding:0 17px;height:55px}.local-label,.avatar{display:none}.topbar-right{gap:0}.breadcrumb{font-size:10px;gap:8px}.main-scroll{padding:22px 15px 0}.page-heading{align-items:flex-start;gap:9px}.page-heading h1{font-size:19px}.eyebrow{font-size:8px}.page-heading p{font-size:10px;max-width:230px}.heading-actions{flex-direction:column;align-items:flex-end}.heading-actions .btn-white{font-size:0;padding:9px}.heading-actions .btn-white svg{height:17px;width:17px}.software-panel,.runtime-panel,.output-panel{padding-left:14px;padding-right:14px}.section-hint{display:none}.section-heading h2{font-size:11px}.software-icon{width:30px;height:30px;border-radius:7px}.software-icon svg{width:18px;height:18px}.software-row{gap:8px}.path-control input{font-size:10px;padding:10px 8px}.btn-browse{font-size:0;padding:9px}.btn-browse svg{height:15px;width:15px}.section-description{font-size:9px}.runtime-controls .icon-btn{width:20px}.runtime-empty .empty-icon{display:none}.runtime-empty p{font-size:8px}.runtime-empty{padding:16px 10px}.runtime-order-note{align-items:flex-start;font-size:8px}.summary-column{grid-template-columns:1fr}.prototype-note{margin:0 3px}.action-bar{align-items:flex-end;padding:13px 0;gap:6px}.readiness{gap:7px}.readiness-icon{height:24px;width:24px;flex-shrink:0}.readiness strong{font-size:9px}.readiness div>span{font-size:8px;max-width:130px;line-height:1.6}.action-buttons #exportConfig{font-size:0;padding:9px}.action-buttons #exportConfig svg{width:16px;height:16px}.action-buttons>.btn-primary{font-size:10px;padding:10px}.action-buttons>.btn-primary>svg:last-child{display:none}.action-buttons{gap:4px}.installer-shell{grid-template-columns:1fr;height:min(680px,calc(100vh - 32px));min-height:450px}.installer-sidebar{display:none}.installer-body{padding:18px 20px}.installer-top{padding:16px 18px 5px}.installer-footer{padding:15px 18px}.installer-footer-note{font-size:8px;max-width:115px;line-height:1.6}.installer-footer .btn{padding:9px 12px}.installer-body h2{font-size:19px}.picker-dialog,.detail-dialog{padding:20px}.toast{left:50%;font-size:10px;max-width:90vw}.history-table th:nth-child(2),.history-table td:nth-child(2){display:none}.history-table th,.history-table td{padding:12px 9px}.history-table{font-size:9px}.settings-card{padding:18px}.phase-line p{font-size:9px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+</style>
+  <script>document.addEventListener("DOMContentLoaded", () => {
+'use strict';
+
+const $ = id => document.getElementById(id);
+const icon = (name, cls = '') => `<svg class="${cls}" aria-hidden="true"><use href="#i-${name}"/></svg>`;
+const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clone = value => JSON.parse(JSON.stringify(value));
+const normalizePath = value => String(value ?? '').trim().replace(/^"|"$/g, '').replace(/\//g, '\\').replace(/\\+$/, '');
+const basename = path => normalizePath(path).split('\\').pop();
+const absolutePath = path => /^(?:[a-z]:\\|\\\\[^\\]+\\[^\\]+)/i.test(String(path).trim());
+const sourceRoot = path => /\.exe$/i.test(path) ? path.slice(0, path.lastIndexOf('\\')) : path;
+const sameOrInside = (child, parent) => child.toLowerCase() === parent.toLowerCase() || child.toLowerCase().startsWith(parent.toLowerCase() + '\\');
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+const STORE = 'desktop-packager-prototype-v1';
+const COMPILER = 'D:\\PCAPP\\Inno Setup 7\\ISCC.exe';
+const ROLES = {C:{name:'功能软件 C',icon:'app',color:'blue',description:'核心功能程序，始终安装',folder:'FeatureApp'},A:{name:'认证软件 A',icon:'key',color:'amber',description:'独立的认证软件，按需安装',folder:'AuthApp'},B:{name:'引擎软件 B',icon:'cpu',color:'teal',description:'独立的引擎软件，按需安装',folder:'EngineApp'}};
+const ROLE_ORDER = ['C','A','B'];
+let saved = {};
+try { saved = JSON.parse(localStorage.getItem(STORE) || '{}') || {}; } catch (_) {}
+let history = Array.isArray(saved.history) ? saved.history.slice(0,12) : [];
+let runtimes = [];
+let compiler = typeof saved.compiler === 'string' ? saved.compiler : COMPILER;
+let pickerKind = '';
+let building = false;
+let cancelRequested = false;
+let buildLogs = [];
+let installer = null;
+let toastTimer;
+let runtimeSerial = 0;
+
+function persist() {
+  try { localStorage.setItem(STORE, JSON.stringify({config:currentConfig(),compiler,history})); } catch (_) {}
+}
+function toast(message) {
+  $('toast').querySelector('span').textContent = message;
+  $('toast').classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $('toast').classList.remove('visible'), 3200);
+}
+function runtimeFromPath(path, params) {
+  path = normalizePath(path);
+  const name = basename(path);
+  const type = /\.msi$/i.test(name) ? 'MSI' : 'EXE';
+  const isVc = /(?:vc[_-]?redist|vcredist)/i.test(name);
+  const isDotnet = /(?:windowsdesktop-runtime|dotnet-runtime)/i.test(name);
+  return {id:'runtime-' + (++runtimeSerial),path,type,params: typeof params === 'string' ? params : type === 'MSI' ? '/qn /norestart' : isVc || isDotnet ? '/install /quiet /norestart' : ''};
+}
+function currentConfig() {
+  return {paths:Object.fromEntries(ROLE_ORDER.map(role => [role,normalizePath($('path'+role).value)])),output:normalizePath($('outputPath').value),name:$('bundleName').value.trim() || '桌面软件套装',version:$('bundleVersion').value.trim() || '1.0.0',runtimes:runtimes.map(({path,params})=>({path,params}))};
+}
+function applyConfig(config) {
+  for (const role of ROLE_ORDER) $('path'+role).value = typeof config.paths?.[role] === 'string' ? config.paths[role] : '';
+  $('outputPath').value = typeof config.output === 'string' ? config.output : '';
+  $('bundleName').value = typeof config.name === 'string' ? config.name.slice(0,60) : '桌面软件套装';
+  $('bundleVersion').value = typeof config.version === 'string' ? config.version.slice(0,24) : '1.0.0';
+  runtimes = (Array.isArray(config.runtimes) ? config.runtimes : []).slice(0,100).filter(item=>item && typeof item.path === 'string').map(item=>runtimeFromPath(item.path,item.params));
+  clearErrors(); renderRuntimes(); renderSummary(); persist();
+}
+function artifactName(config, withTime = false) {
+  const safe = value => value.replace(/[<>:"/\\|?*\x00-\x1f]/g,'-').replace(/[. ]+$/,'') || 'Package';
+  const stamp = new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date()).replace(/[- :]/g,'');
+  return `${safe(config.name)}-${safe(config.version)}${withTime?'-'+stamp:''}-Bundle.exe`;
+}
+function renderSummary() {
+  const config = currentConfig();
+  const included = ROLE_ORDER.filter(role=>config.paths[role]);
+  $('includedCount').textContent = `${included.length} / 3`;
+  $('softwareSummary').innerHTML = ROLE_ORDER.map(role=>`<div class="software-summary-item ${config.paths[role]?'':'missing'}"><span class="role-letter">${role}</span><div><strong>${ROLES[role].name}</strong><small>${config.paths[role] ? role==='C'?'固定安装':'用户可勾选安装' : role==='C'?'等待配置发布目录':'本包暂不包含'}</small></div>${config.paths[role]?icon('check'):''}</div>`).join('');
+  for (const role of ROLE_ORDER) {
+    const hasPath = Boolean(config.paths[role]);
+    $('status'+role).textContent = hasPath ? '路径已填写' : role==='C'?'未配置':'未添加';
+    $('status'+role).classList.toggle('configured',hasPath);
+    const clearButton = document.querySelector(`[data-clear="${role}"]`);
+    if (clearButton) clearButton.hidden = !hasPath;
+  }
+  $('runtimeSummaryText').textContent = runtimes.length ? `${runtimes.length} 个安装包，按列表顺序执行` : '未添加环境安装包';
+  $('artifactName').textContent = artifactName(config);
+  const ready = Boolean(config.paths.C && config.output);
+  if (!building) {
+    $('readinessTitle').textContent = ready ? '配置已就绪' : '填写路径，即可开始';
+    $('readinessText').textContent = ready ? `${included.length} 款软件 · ${runtimes.length} 个运行环境` : '请配置功能软件 C 与输出目录';
+  }
+  $('readinessIcon').classList.toggle('ready',ready);
+}
+function renderRuntimes() {
+  $('runtimeCount').textContent = runtimes.length;
+  $('runtimeEmpty').hidden = Boolean(runtimes.length);
+  $('runtimeOrderNote').hidden = !runtimes.length;
+  $('runtimeList').innerHTML = runtimes.map((item,index)=>`<article class="runtime-item" data-runtime="${item.id}"><div class="runtime-main"><span class="runtime-file-icon">${icon('file')}</span><div class="runtime-info"><div class="runtime-name"><strong>${escapeHtml(basename(item.path))}</strong><span class="tag tag-gray">${item.type}</span></div><div class="runtime-path" title="${escapeHtml(item.path)}">${escapeHtml(item.path)}</div></div><div class="runtime-controls"><button type="button" class="icon-btn" data-runtime-action="up" aria-label="上移 ${escapeHtml(basename(item.path))}" ${index===0?'disabled':''}>${icon('up')}</button><button type="button" class="icon-btn" data-runtime-action="down" aria-label="下移 ${escapeHtml(basename(item.path))}" ${index===runtimes.length-1?'disabled':''}>${icon('down')}</button><button type="button" class="icon-btn remove" data-runtime-action="remove" aria-label="移除 ${escapeHtml(basename(item.path))}">${icon('x')}</button></div></div><details class="runtime-params"><summary><span>${item.type==='MSI'?'MSI 安装参数':item.params?'已配置安装参数':'使用安装包自身界面'}</span>${icon('down')}</summary><input data-runtime-params="${item.id}" value="${escapeHtml(item.params)}" aria-label="${escapeHtml(basename(item.path))} 的安装参数" placeholder="可填写该安装包支持的静默参数"><p>${item.type==='MSI'?'MSI 将通过系统安装服务执行。':'仅使用厂商支持的参数；留空时显示安装包自身界面。'} 环境安装包始终先于业务软件执行。</p></details></article>`).join('');
+  renderSummary();
+}
+function clearErrors() {
+  $('errorC').textContent = '';
+  $('errorOutput').textContent = '';
+  document.querySelectorAll('.path-control.invalid').forEach(el=>el.classList.remove('invalid'));
+}
+function validate(config) {
+  clearErrors();
+  const errors = [];
+  function error(field,message) {
+    if (field==='C' || field==='output') {
+      $(field==='C'?'errorC':'errorOutput').textContent = message;
+      $(field==='C'?'pathC':'outputPath').closest('.path-control').classList.add('invalid');
+    }
+    errors.push(message);
+  }
+  if (!config.paths.C) error('C','请选择功能软件 C 的发布目录。');
+  if (!config.output) error('output','请选择安装包输出目录。');
+  for (const role of ROLE_ORDER) if (config.paths[role] && !absolutePath(config.paths[role])) error(role,`${ROLES[role].name} 需要完整的 Windows 路径，例如 D:\\Apps\\${ROLES[role].folder}。`);
+  if (config.output && !absolutePath(config.output)) error('output','输出目录需要完整的 Windows 路径。');
+  if (config.output && /\.(exe|msi)$/i.test(config.output)) error('output','请填写输出目录，不是安装包文件名。');
+  const roots = ROLE_ORDER.filter(role=>config.paths[role]).map(role=>({role,path:sourceRoot(config.paths[role])}));
+  for (const root of roots) if (config.output && sameOrInside(config.output,root.path)) error('output','输出目录不能位于软件发布目录内部。');
+  for (let i=0;i<roots.length;i++) for (let j=i+1;j<roots.length;j++) if (sameOrInside(roots[i].path,roots[j].path)||sameOrInside(roots[j].path,roots[i].path)) errors.push(`${ROLES[roots[i].role].name} 与 ${ROLES[roots[j].role].name} 的发布目录重叠。`);
+  for (const item of config.runtimes) if (!absolutePath(item.path)||! /\.(exe|msi)$/i.test(item.path)) errors.push('运行环境需要完整的 EXE 或 MSI 安装包路径。');
+  if (errors.length) { toast(errors[0]); return false; }
+  return true;
+}
+
+function openPicker(kind) {
+  if (building) return;
+  pickerKind = kind;
+  const multiple = kind==='runtime';
+  $('pickerError').textContent = '';
+  $('pickerPath').hidden = multiple;
+  $('pickerMultiple').hidden = !multiple;
+  $('pickerMultiple').value = '';
+  $('pickerTitle').textContent = multiple?'添加运行环境安装包':kind==='output'?'选择输出目录':kind==='compiler'?'选择 Inno Setup 编译器':`选择${ROLES[kind].name}发布目录`;
+  $('pickerDescription').textContent = multiple?'可同时选择多个示例安装包，或粘贴自己的安装包路径。':'选择一个示例目录，或直接填写自己的完整 Windows 路径。';
+  $('pickerPathLabel').textContent = multiple?'其他安装包路径（每行一个）':kind==='compiler'?'编译器路径':'目录或主程序路径';
+  $('confirmPath').textContent = multiple?'添加选中安装包':kind==='compiler'?'使用此编译器':'选择此目录';
+  const choices = multiple ? [
+    ['VC_redist.x64.exe','Microsoft Visual C++ · x64','D:\\Prerequisites\\VC_redist.x64.exe'],
+    ['VC_redist.x86.exe','Microsoft Visual C++ · x86','D:\\Prerequisites\\VC_redist.x86.exe'],
+    ['windowsdesktop-runtime-x64.exe','.NET Desktop Runtime · x64','D:\\Prerequisites\\windowsdesktop-runtime-x64.exe'],
+    ['CustomRuntime.msi','其他 MSI 环境安装包','D:\\Prerequisites\\CustomRuntime.msi']
+  ] : kind==='output' ? [['InstallPackages','安装包输出目录','D:\\InstallPackages'],['Output','本地输出目录','D:\\Output']] : kind==='compiler' ? [['Inno Setup 7','已有编译器目录',COMPILER]] : [[ROLES[kind].folder,'完整发布目录',`D:\\DesktopApps\\${ROLES[kind].folder}`],[ROLES[kind].folder+'.exe','通过主程序确定发布目录',`D:\\DesktopApps\\${ROLES[kind].folder}\\${ROLES[kind].folder}.exe`]];
+  $('pickerLocation').textContent = multiple?'此电脑 / D: / Prerequisites':kind==='output'?'此电脑 / D:':kind==='compiler'?'此电脑 / D: / PCAPP':'此电脑 / D: / DesktopApps';
+  $('pickerPath').value = kind==='compiler'?$('compilerPath').value:kind==='output'?$('outputPath').value:multiple?'':$('path'+kind).value;
+  $('pickerChoices').innerHTML = choices.map(([name,description,path])=>multiple?`<label class="picker-choice"><input type="checkbox" value="${escapeHtml(path)}">${icon('file')}<div><strong>${escapeHtml(name)}</strong><small>${description}</small></div><span class="tag tag-gray">${/\.msi$/i.test(path)?'MSI':'EXE'}</span></label>`:`<button type="button" class="picker-choice" data-picker-value="${escapeHtml(path)}">${icon(kind==='compiler'?'terminal':'folder')}<div><strong>${escapeHtml(name)}</strong><small>${description}</small></div>${icon('arrow')}</button>`).join('');
+  $('pathDialog').showModal();
+}
+function confirmPicker() {
+  if (pickerKind==='runtime') {
+    const selected = [...$('pickerChoices').querySelectorAll('input:checked')].map(input=>input.value);
+    const manual = $('pickerMultiple').value.split(/\r?\n/).map(normalizePath).filter(Boolean);
+    const paths = [...selected,...manual];
+    if (!paths.length) { $('pickerError').textContent='至少选择或填写一个安装包路径。'; return; }
+    if (paths.some(path=>!absolutePath(path)||! /\.(exe|msi)$/i.test(path))) { $('pickerError').textContent='请填写完整的 EXE 或 MSI 路径，每行一个。'; return; }
+    const keys = new Set(runtimes.map(item=>item.path.toLowerCase()));
+    let added = 0;
+    for (const path of paths) if (!keys.has(path.toLowerCase())) { runtimes.push(runtimeFromPath(path)); keys.add(path.toLowerCase()); added++; }
+    renderRuntimes(); persist(); toast(added?`已添加 ${added} 个运行环境安装包`:'所选安装包已经在列表中');
+  } else {
+    const path = normalizePath($('pickerPath').value);
+    if (!absolutePath(path)) { $('pickerError').textContent='请填写完整的 Windows 路径。'; return; }
+    $(pickerKind==='output'?'outputPath':pickerKind==='compiler'?'compilerPath':'path'+pickerKind).value = path;
+    clearErrors(); renderSummary(); persist();
+  }
+  $('pathDialog').close();
+}
+function navigate(page) {
+  for (const name of ['workspace','history','settings']) $('page-'+name).hidden = name!==page;
+  document.querySelectorAll('[data-page]').forEach(el=>el.classList.toggle('active',el.dataset.page===page));
+  $('breadcrumbTitle').textContent = {workspace:'打包工作台',history:'构建记录',settings:'工具设置'}[page];
+  $('mainScroll').scrollTop = 0;
+  if (page==='history') renderHistory();
+}
+function lockBuild(locked) {
+  building = locked;
+  $('packageForm').querySelectorAll('input,button,textarea').forEach(el=>{ if (!['cancelBuild','collapseConsole'].includes(el.id)) el.disabled = locked; });
+  $('loadExample').disabled = locked;
+  $('previewButton').disabled = locked;
+  $('cancelBuild').hidden = !locked;
+  $('cancelBuild').disabled = false;
+  $('cancelBuild').textContent = '取消打包';
+  $('buildButton').innerHTML = locked?`${icon('clock')}正在演示打包…`:`${icon('box')}开始打包${icon('arrow')}`;
+  if (!locked) renderRuntimes();
+}
+function addBuildLog(message,kind='') {
+  const time = new Intl.DateTimeFormat('zh-CN',{timeZone:'Asia/Shanghai',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());
+  buildLogs.push({time,message,kind});
+  const line = document.createElement('div'); line.className='log-line '+kind;
+  const timestamp = document.createElement('time'); timestamp.textContent=time;
+  line.append(timestamp,document.createTextNode(message)); $('buildLogs').append(line); $('buildLogs').scrollTop=$('buildLogs').scrollHeight;
+}
+async function startBuild(event) {
+  event.preventDefault(); if (building) return;
+  const config=currentConfig(); if (!validate(config)) return;
+  cancelRequested=false; buildLogs=[]; $('buildLogs').replaceChildren(); $('buildConsole').hidden=false; $('buildLogs').hidden=false;
+  $('buildStatusTag').textContent='演示中'; $('buildStatusTag').className='tag tag-blue';
+  $('buildProgressFill').style.width='0%'; $('buildPercent').textContent='0%';
+  lockBuild(true); persist();
+  const stages=[['检查路径与配置', '演示：路径格式检查通过；未读取真实磁盘文件。'],['收集发布文件','演示：保留软件目录结构与依赖文件。']];
+  for (const runtime of config.runtimes) stages.push(['封装运行环境','演示：加入环境安装包 '+basename(runtime.path)]);
+  for (const role of ROLE_ORDER.filter(role=>config.paths[role])) stages.push(['生成独立子安装器','演示：生成 '+ROLES[role].name+' 子安装器，使用独立产品标识。']);
+  stages.push(['生成统一安装包','演示：配置环境优先安装、C 必装与 A/B 可选。'],['完成演示构建','演示：流程完成，未生成实际 EXE 文件。']);
+  addBuildLog('开始模拟构建；不会调用 ISCC 或执行安装程序。');
+  let status='success';
+  for (let i=0;i<stages.length;i++) {
+    if (cancelRequested) { status='cancelled'; break; }
+    $('buildStage').textContent=stages[i][0]; $('readinessTitle').textContent=stages[i][0]; $('readinessText').textContent='仅演示构建流程';
+    await delay(550);
+    if (cancelRequested) { status='cancelled'; break; }
+    addBuildLog(stages[i][1],i===stages.length-1?'success':'');
+    const progress=Math.round((i+1)/stages.length*100); $('buildProgressFill').style.width=progress+'%'; $('buildPercent').textContent=progress+'%';
+  }
+  const record={id:Date.now()+'-'+Math.random().toString(36).slice(2,6),date:new Date().toISOString(),config:clone(config),name:artifactName(config,true),status,logs:clone(buildLogs)};
+  if (status==='cancelled') { addBuildLog('演示已取消；未产生真实构建文件。','error'); record.logs=clone(buildLogs); $('buildStatusTag').textContent='已取消'; $('buildStatusTag').className='tag tag-gray'; $('buildStage').textContent='演示构建已取消'; toast('已取消演示打包'); }
+  else { $('buildStatusTag').textContent='演示完成'; $('buildStatusTag').className='tag tag-green'; $('buildStage').textContent='演示完成 · 未生成实际安装包'; toast('演示打包完成，可以预览安装界面'); }
+  history.unshift(record); history=history.slice(0,12); lockBuild(false); renderHistory(); persist();
+  if (status==='success') showRecord(record);
+}
+function renderHistory() {
+  $('historyCount').textContent=history.length;
+  if (!history.length) { $('historyList').innerHTML=`<div class="history-empty">${icon('clock')}<h3>还没有构建记录</h3><p>完成一次演示打包后，记录会保存在这里。</p><button class="btn btn-white" data-go-workspace>前往工作台${icon('arrow')}</button></div>`; return; }
+  $('historyList').innerHTML=`<table class="history-table"><thead><tr><th style="width:41%">安装包</th><th style="width:23%">包含内容</th><th style="width:18%">状态</th><th style="width:18%">操作</th></tr></thead><tbody>${history.map(record=>`<tr><td class="history-name">${escapeHtml(record.name)}<small>${escapeHtml(new Date(record.date).toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',hour12:false}))}</small></td><td>${ROLE_ORDER.filter(role=>record.config.paths[role]).join(' + ')}<small>${record.config.runtimes.length} 个运行环境</small></td><td><span class="tag ${record.status==='success'?'tag-green':'tag-gray'}">${record.status==='success'?'演示完成':'已取消'}</span></td><td><button class="btn btn-text" data-record="${escapeHtml(record.id)}">查看详情</button></td></tr>`).join('')}</tbody></table>`;
+}
+function showRecord(record) {
+  $('detailEyebrow').textContent='构建记录 · 模拟产物'; $('detailTitle').textContent=record.status==='success'?'演示打包完成':'演示打包已取消';
+  $('detailBody').innerHTML=`<p class="detail-description">本次配置与日志已保存。此为原型演示，没有生成实际安装包。</p><div class="detail-row"><span>安装包名称</span><span>${escapeHtml(record.name)}</span></div><div class="detail-row"><span>输出目录</span><span>${escapeHtml(record.config.output)}</span></div><div class="detail-row"><span>业务软件</span><span>${ROLE_ORDER.filter(role=>record.config.paths[role]).map(role=>ROLES[role].name).join('、')}</span></div><div class="detail-row"><span>环境安装包</span><span>${record.config.runtimes.map(item=>escapeHtml(basename(item.path))).join('<br>')||'无'}</span></div><div class="detail-note">安装流程：先执行运行环境，再安装 C 和用户勾选的 A/B。三个软件各自独立安装、运行与卸载。</div><div class="detail-action"><button class="btn btn-white" id="recordPreview">${icon('eye')}预览此配置的安装界面</button><button class="btn btn-text" id="reuseRecord">使用此配置</button></div>`;
+  $('recordPreview').onclick=()=>{ $('detailDialog').close(); openInstaller(record.config); };
+  $('reuseRecord').onclick=()=>{if(building){toast('请先等待当前演示结束');return;} applyConfig(record.config);$('detailDialog').close();navigate('workspace');toast('已恢复此构建配置');};
+  $('detailDialog').showModal();
+}
+
+function openInstaller(config=currentConfig()) {
+  if (!config.paths.C) { toast('先填写功能软件 C 的路径，或加载完整示例。'); return; }
+  installer={stage:'select',config:clone(config),selected:{C:true,A:false,B:false},scenario:'success',tasks:[],cancelRequested:false};
+  renderInstaller(); $('installerDialog').showModal();
+}
+function environmentBlock(config) {
+  return config.runtimes.length?`<div class="installer-environments"><h3>${icon('shield')}以下运行环境将优先安装</h3><div class="environment-chips">${config.runtimes.map(item=>`<span>${escapeHtml(basename(item.path))}</span>`).join('')}</div><p>所有环境完成后，再安装所选软件；环境失败时停止。</p></div>`:'';
+}
+function renderInstaller() {
+  const state=installer, config=state.config, stage=state.stage;
+  const step=stage==='select'?1:stage==='result'?3:2;
+  document.querySelectorAll('[data-installer-step]').forEach(el=>{el.classList.toggle('current',Number(el.dataset.installerStep)===step);el.classList.toggle('done',Number(el.dataset.installerStep)<step);});
+  $('installerNext').disabled=stage==='install'; $('installerBack').disabled=false; $('closeInstaller').disabled=false;
+  $('installerFooterNote').textContent='此预览不会执行实际安装';
+  const selectedRoles=ROLE_ORDER.filter(role=>config.paths[role]&&state.selected[role]);
+  if (stage==='select') {
+    $('installerBack').textContent='取消'; $('installerNext').innerHTML=`下一步${icon('arrow')}`;
+    $('installerBody').innerHTML=`<h2>选择需要安装的软件</h2><p class="intro">${escapeHtml(config.name)} ${escapeHtml(config.version)} · 软件可独立运行与卸载</p>${ROLE_ORDER.filter(role=>config.paths[role]).map(role=>`<label class="install-choice ${state.selected[role]?'selected':''}"><input type="checkbox" data-install-role="${role}" ${state.selected[role]?'checked':''} ${role==='C'?'disabled':''}><span class="software-icon ${ROLES[role].color}">${icon(ROLES[role].icon)}</span><div><strong>${ROLES[role].name}</strong><p>${ROLES[role].description}</p></div><span class="tag ${role==='C'?'tag-blue':'tag-gray'}">${role==='C'?'必装':'可选'}</span></label>`).join('')}${environmentBlock(config)}<div class="preview-scenario"><span>原型演示场景</span><select id="installScenario" aria-label="安装预览演示场景"><option value="success">正常安装完成</option>${config.runtimes.length?'<option value="environment-fail">首个运行环境安装失败</option>':''}<option value="software-fail">首个业务软件安装失败</option></select></div>`;
+    $('installScenario').value=state.scenario;
+  } else if (stage==='summary') {
+    $('installerBack').textContent='上一步'; $('installerNext').innerHTML=`开始安装${icon('arrow')}`;
+    $('installerBody').innerHTML=`<h2>准备好开始安装</h2><p class="intro">请确认本次内容。运行环境会在业务软件之前安装。</p>${config.runtimes.length?`<div class="install-summary-group"><h3>${icon('layers')}第一阶段 · 运行环境</h3>${config.runtimes.map((item,index)=>`<div class="install-summary-item">${icon('file')}<div>${escapeHtml(basename(item.path))}<small>${escapeHtml(item.params||'使用安装包自身界面')}</small></div><span>${index+1}</span></div>`).join('')}</div>`:''}<div class="install-summary-group"><h3>${icon('app')}${config.runtimes.length?'第二阶段':'安装内容'} · 所选软件</h3>${selectedRoles.map(role=>`<div class="install-summary-item">${icon(ROLES[role].icon)}<div>${ROLES[role].name}<small>C:\\Program Files\\${ROLES[role].folder}</small></div><span>独立安装</span></div>`).join('')}</div><div class="detail-note">未勾选的软件保持原状；不会卸载已经存在的软件。各软件使用独立目录与卸载入口。</div>`;
+  } else if (stage==='install') {
+    $('installerBack').textContent=state.cancelRequested?'正在停止…':'停止后续安装'; $('installerBack').disabled=state.cancelRequested;
+    $('installerNext').textContent='正在安装…'; $('installerFooterNote').textContent='模拟安装中 · 不修改系统';
+    const completed=state.tasks.filter(task=>task.status==='done').length;
+    const active=state.tasks.find(task=>task.status==='running');
+    const percent=Math.round(completed/state.tasks.length*100);
+    $('installerBody').innerHTML=`<h2>${active?.type==='runtime'?'正在准备运行环境':'正在安装所选软件'}</h2><p class="intro">${state.cancelRequested?'当前任务完成后停止。':'请稍候，安装向导将按阶段完成安装。'}</p><div class="install-progress-track"><div style="width:${percent}%"></div></div><div class="install-status-line"><span>${escapeHtml(active?.name||'准备安装')}</span><strong>${percent}%</strong></div><div class="install-tasks">${state.tasks.map((task,index)=>`<div class="install-task ${task.status}"><span>${task.status==='done'?'✓':index+1}</span><span>${escapeHtml(task.name)}</span><span class="task-status">${{pending:'等待中',running:'演示安装中',done:'已完成',failed:'失败'}[task.status]}</span></div>`).join('')}</div>`;
+  } else {
+    const success=state.result==='success', cancelled=state.result==='cancelled';
+    $('installerBack').textContent='重新预览'; $('installerNext').textContent='完成';
+    $('installerBody').innerHTML=`<div class="install-result-icon ${success?'':'failed'}">${icon(success?'check':'x')}</div><h2>${success?'演示安装完成':cancelled?'已停止后续安装':'演示安装未完成'}</h2><p class="intro">${success?'运行环境与所选软件均已完成演示安装。':escapeHtml(state.reason)}<br>此原型不会实际安装软件或修改系统。</p><div class="install-result-list">${state.tasks.map(task=>`<div class="install-result-item ${task.status==='failed'?'failed':task.status==='pending'?'pending':''}">${icon(task.status==='done'?'check':task.status==='failed'?'x':'clock')}<span>${escapeHtml(task.name)} · ${{done:'完成',failed:'安装失败',pending:'未执行',running:'未完成'}[task.status]}</span></div>`).join('')}</div><div class="detail-note">${success?'三个软件各自独立运行与卸载。安装结束后通过各自快捷方式启动。':'已成功的组件保持其状态，不自动卸载。可以修复问题后重新运行安装包。'}</div>`;
+  }
+}
+async function simulateInstall() {
+  const state=installer;
+  state.tasks=[...state.config.runtimes.map(item=>({name:basename(item.path),type:'runtime',status:'pending'})),...ROLE_ORDER.filter(role=>state.config.paths[role]&&state.selected[role]).map(role=>({name:ROLES[role].name,type:'software',status:'pending'}))];
+  state.stage='install'; state.cancelRequested=false; renderInstaller();
+  let failed=false;
+  for (const task of state.tasks) {
+    task.status='running'; renderInstaller(); await delay(900);
+    if ((state.scenario==='environment-fail'&&task.type==='runtime')||(state.scenario==='software-fail'&&task.type==='software')) {
+      task.status='failed'; state.result='failed'; state.reason=task.type==='runtime'?'运行环境安装失败，后续业务软件未执行。':'业务软件安装失败，已停止执行后续任务。'; failed=true; break;
+    }
+    task.status='done'; renderInstaller();
+    if (state.cancelRequested) { state.result='cancelled';state.reason='当前任务已完成，剩余任务未执行。';failed=true;break; }
+    await delay(120);
+  }
+  if (!failed) state.result='success';
+  state.stage='result'; renderInstaller();
+}
+function closeInstaller() {
+  if (installer?.stage==='install') { installer.cancelRequested=true;renderInstaller();toast('当前任务完成后停止，不强制中断安装器。');return; }
+  $('installerDialog').close();
+}
+
+document.addEventListener('click',event=>{
+  const target=event.target.closest('button,a'); if (!target) return;
+  if (target.dataset.page) navigate(target.dataset.page);
+  if (target.hasAttribute('data-go-workspace')) navigate('workspace');
+  if (target.dataset.browse) openPicker(target.dataset.browse);
+  if (target.dataset.clear) { $('path'+target.dataset.clear).value='';renderSummary();persist(); }
+  if (target.dataset.close) $(target.dataset.close).close();
+  if (target.dataset.pickerValue) { $('pickerPath').value=target.dataset.pickerValue; $('pickerChoices').querySelectorAll('.picker-choice').forEach(el=>el.classList.toggle('selected',el===target)); }
+  if (target.dataset.runtimeAction) {
+    const index=runtimes.findIndex(item=>item.id===target.closest('[data-runtime]').dataset.runtime);
+    if (target.dataset.runtimeAction==='remove') runtimes.splice(index,1);
+    else {const to=index+(target.dataset.runtimeAction==='up'?-1:1);if(to>=0&&to<runtimes.length)[runtimes[index],runtimes[to]]=[runtimes[to],runtimes[index]];}
+    renderRuntimes();persist();
+  }
+  if (target.dataset.record) { const record=history.find(item=>item.id===target.dataset.record); if(record)showRecord(record); }
+});
+$('packageForm').addEventListener('input',event=>{
+  if (event.target.dataset.runtimeParams) {
+    const item=runtimes.find(item=>item.id===event.target.dataset.runtimeParams); if(item)item.params=event.target.value;
+    const summary=event.target.closest('details').querySelector('summary span'); summary.textContent=item.type==='MSI'?'MSI 安装参数':item.params?'已配置安装参数':'使用安装包自身界面';
+  } else {clearErrors();renderSummary();}
+  persist();
+});
+$('packageForm').addEventListener('submit',startBuild);
+$('confirmPath').onclick=confirmPicker;
+$('addRuntime').onclick=$('addRuntimeEmpty').onclick=()=>openPicker('runtime');
+$('loadExample').onclick=()=>{applyConfig({paths:{C:'D:\\DesktopApps\\FeatureApp',A:'D:\\DesktopApps\\AuthApp',B:'D:\\DesktopApps\\EngineApp'},output:'D:\\InstallPackages',name:'桌面软件套装',version:'1.0.0',runtimes:[{path:'D:\\Prerequisites\\VC_redist.x64.exe'},{path:'D:\\Prerequisites\\VC_redist.x86.exe'}]});toast('已加载 3 款软件与 2 个 VC++ 环境示例');};
+$('previewButton').onclick=()=>openInstaller();
+$('cancelBuild').onclick=()=>{cancelRequested=true;$('cancelBuild').disabled=true;$('cancelBuild').textContent='正在取消…';};
+$('collapseConsole').onclick=()=>{ $('buildLogs').hidden=!$('buildLogs').hidden; $('collapseConsole').innerHTML=icon($('buildLogs').hidden?'down':'up'); $('collapseConsole').setAttribute('aria-label',$('buildLogs').hidden?'展开日志':'收起日志'); };
+$('exportConfig').onclick=()=>{
+  const config=currentConfig();const blob=new Blob([JSON.stringify({format:'desktop-packager-prototype',version:1,...config},null,2)],{type:'application/json'});
+  const link=document.createElement('a');link.href=URL.createObjectURL(blob);link.download='安装包工坊-配置.json';link.click();setTimeout(()=>URL.revokeObjectURL(link.href),1500);toast('配置已导出为 JSON 文件');
+};
+$('importConfig').onclick=()=>$('importFile').click();
+$('importFile').onchange=async event=>{
+  const file=event.target.files[0];if(!file)return;
+  try {if(file.size>1024*1024)throw new Error();const data=JSON.parse(await file.text());if(data.format!=='desktop-packager-prototype'||!data.paths||!Array.isArray(data.runtimes))throw new Error();applyConfig(data);toast('配置已导入');}catch(_){toast('无法导入，请选择此原型导出的 JSON 配置。');}
+  event.target.value='';
+};
+$('saveSettings').onclick=()=>{const path=normalizePath($('compilerPath').value);if(!absolutePath(path)||! /\\ISCC\.exe$/i.test(path)){toast('请填写指向 ISCC.exe 的完整路径。');return;}compiler=path;persist();toast('编译器路径已保存；原型不检测真实文件。');};
+$('resetCompiler').onclick=()=>{$('compilerPath').value=COMPILER;toast('已恢复默认路径，点击保存设置后生效。');};
+$('aboutButton').onclick=()=>{$('detailEyebrow').textContent='关于此原型';$('detailTitle').textContent='安装包工坊';$('detailBody').innerHTML='<p class="detail-description">用于确认桌面打包工具的布局与交互。路径选择使用示例数据，打包和安装均为模拟。</p><div class="detail-note">支持 C 必选、A/B 可选，以及多个已有运行环境安装包。正式流程先安装运行环境，再独立安装所选软件。<br><br>你确认原型后，再使用 Qt 严格对照此原型实现桌面应用。</div>';$('detailDialog').showModal();};
+$('installerBody').addEventListener('change',event=>{
+  if(event.target.dataset.installRole){installer.selected[event.target.dataset.installRole]=event.target.checked;event.target.closest('.install-choice').classList.toggle('selected',event.target.checked);}
+  if(event.target.id==='installScenario')installer.scenario=event.target.value;
+});
+$('installerNext').onclick=()=>{if(installer.stage==='select'){installer.stage='summary';renderInstaller();}else if(installer.stage==='summary')simulateInstall();else if(installer.stage==='result')closeInstaller();};
+$('installerBack').onclick=()=>{if(installer.stage==='select')closeInstaller();else if(installer.stage==='summary'||installer.stage==='result'){installer.stage='select';renderInstaller();}else closeInstaller();};
+$('closeInstaller').onclick=closeInstaller;
+$('installerDialog').addEventListener('cancel',event=>{if(installer?.stage==='install'){event.preventDefault();closeInstaller();}});
+$('compilerPath').value=compiler;
+applyConfig(saved.config&&typeof saved.config==='object'?saved.config:{paths:{},output:'',runtimes:[]});
+renderHistory();
+
+});</script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="M3 8v9l9 5 9-5V8M12 13v9M7.5 5.5l9 5"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-.6 3-2.7 1L3 6l-1 3 2.2 2v2L2 15l1 3 2.7-1 2.7 1 .6 3h6l.6-3 2.7-1 2.7 1 1-3-2.2-2v-2L22 9l-1-3-2.7 1-2.7-1L15 3H9Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M3 9h18"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="m11.5 11.5 9 9M16 16l3-3M18.5 18.5l3-3"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 3v3m6-3v3M9 18v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3"/></symbol>
+    <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M8 6h.01M12 6h.01m-4 7h8m-8 4h5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10l-7-7Z"/><path d="M14 3v7h7M7 14h10m-10 3h6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m6 8 4 4-4 4m7 0h5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.01"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#workspace" aria-label="安装包工坊首页"><span class="brand-icon"><svg><use href="#i-box"/></svg></span><span>安装包工坊<small>DESKTOP PACKAGER</small></span></a>
+      <div class="nav-label">工作空间</div>
+      <nav aria-label="主导航">
+        <button class="nav-item active" data-page="workspace"><svg><use href="#i-grid"/></svg>打包工作台<span class="nav-active-dot"></span></button>
+        <button class="nav-item" data-page="history"><svg><use href="#i-clock"/></svg>构建记录<span class="nav-count" id="historyCount">0</span></button>
+        <button class="nav-item" data-page="settings"><svg><use href="#i-settings"/></svg>工具设置</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="engine-card"><span class="engine-icon"><svg><use href="#i-terminal"/></svg></span><div><strong>Inno Setup 7</strong><span><i class="dot"></i>编译路径已配置</span></div></div>
+        <button class="sidebar-help" id="aboutButton"><svg><use href="#i-info"/></svg>关于此原型<svg class="tiny"><use href="#i-arrow"/></svg></button>
+        <div class="sidebar-foot">HTML 交互原型 <span>v0.1</span></div>
+      </div>
+    </aside>
+
+    <div class="app-content">
+      <header class="topbar"><div class="breadcrumb">工作空间<span>/</span><strong id="breadcrumbTitle">打包工作台</strong></div><div class="topbar-right"><span class="prototype-badge"><span></span>交互原型</span><span class="local-label">本地工作区</span><div class="avatar">P</div></div></header>
+
+      <main class="main-scroll" id="mainScroll">
+        <section class="page" id="page-workspace" aria-labelledby="workspaceTitle">
+          <div class="page-heading"><div><div class="eyebrow">BUILD YOUR PACKAGE</div><h1 id="workspaceTitle">把软件交付，变得简单。</h1><p>选择发布目录与运行环境，制作一个统一安装包。</p></div><div class="heading-actions"><button class="btn btn-text" id="loadExample"><svg><use href="#i-layers"/></svg>加载完整示例</button><button class="btn btn-white" id="previewButton"><svg><use href="#i-eye"/></svg>安装界面预览</button></div></div>
+
+          <form id="packageForm" novalidate>
+            <div class="workspace-grid">
+              <div class="form-stack">
+                <section class="panel software-panel"><div class="section-heading"><div><span class="step-marker">01</span><h2>软件发布目录</h2></div><span class="section-hint">C 必填 · A / B 按需添加</span></div>
+                  <div class="software-row" data-software="C"><div class="software-icon blue"><svg><use href="#i-app"/></svg></div><div class="software-fields"><div class="field-heading"><label for="pathC">功能软件 <span>C</span></label><span class="tag tag-blue">必填</span><span class="field-status" id="statusC">未配置</span></div><div class="path-control"><input id="pathC" name="pathC" autocomplete="off" placeholder="选择 C 的完整发布目录" aria-describedby="errorC"><button class="btn btn-browse" type="button" data-browse="C"><svg><use href="#i-folder"/></svg>浏览</button></div><span class="field-error" id="errorC"></span></div></div>
+                  <div class="software-row" data-software="A"><div class="software-icon amber"><svg><use href="#i-key"/></svg></div><div class="software-fields"><div class="field-heading"><label for="pathA">认证软件 <span>A</span></label><span class="tag tag-gray">可选</span><span class="field-status" id="statusA">未添加</span></div><div class="path-control"><input id="pathA" name="pathA" autocomplete="off" placeholder="留空则不包含认证软件"><button class="icon-btn clear-path" type="button" data-clear="A" aria-label="清空认证软件 A 路径" hidden><svg><use href="#i-x"/></svg></button><button class="btn btn-browse" type="button" data-browse="A"><svg><use href="#i-folder"/></svg>浏览</button></div></div></div>
+                  <div class="software-row" data-software="B"><div class="software-icon teal"><svg><use href="#i-cpu"/></svg></div><div class="software-fields"><div class="field-heading"><label for="pathB">引擎软件 <span>B</span></label><span class="tag tag-gray">可选</span><span class="field-status" id="statusB">未添加</span></div><div class="path-control"><input id="pathB" name="pathB" autocomplete="off" placeholder="留空则不包含引擎软件"><button class="icon-btn clear-path" type="button" data-clear="B" aria-label="清空引擎软件 B 路径" hidden><svg><use href="#i-x"/></svg></button><button class="btn btn-browse" type="button" data-browse="B"><svg><use href="#i-folder"/></svg>浏览</button></div></div></div>
+                  <div class="panel-note"><svg><use href="#i-info"/></svg>完整保留发布目录中的程序、依赖文件与子目录。</div>
+                </section>
+
+                <section class="panel runtime-panel"><div class="section-heading"><div><span class="step-marker">02</span><h2>运行环境安装包</h2><span class="count-pill" id="runtimeCount">0</span></div><button class="btn btn-small btn-white" type="button" id="addRuntime"><svg><use href="#i-plus"/></svg>添加安装包</button></div><p class="section-description">添加已有的 VC++、.NET 等安装包，支持多个 EXE / MSI。</p><div id="runtimeList"></div><div class="runtime-empty" id="runtimeEmpty"><div class="empty-icon"><svg><use href="#i-layers"/></svg></div><div><strong>为软件备好运行环境</strong><p>已添加的环境会在所有软件之前安装。</p></div><button type="button" class="btn btn-link" id="addRuntimeEmpty">添加环境<svg><use href="#i-plus"/></svg></button></div><div class="runtime-order-note" id="runtimeOrderNote" hidden><svg><use href="#i-shield"/></svg>按列表顺序优先安装；任一环境失败时，停止后续软件安装。</div></section>
+
+                <section class="panel output-panel"><div class="section-heading"><div><span class="step-marker">03</span><h2>安装包输出</h2></div><span class="section-hint">一个 EXE，统一交付</span></div><label class="input-label" for="outputPath">输出目录 <span class="required-star">*</span></label><div class="path-control"><span class="input-prefix"><svg><use href="#i-folder"/></svg></span><input id="outputPath" name="outputPath" autocomplete="off" placeholder="选择安装包保存位置" aria-describedby="errorOutput"><button class="btn btn-browse" type="button" data-browse="output"><svg><use href="#i-folder"/></svg>浏览</button></div><span class="field-error" id="errorOutput"></span><details class="advanced"><summary>更多打包选项<svg><use href="#i-down"/></svg></summary><div class="advanced-fields"><div><label class="input-label" for="bundleName">安装包名称</label><input id="bundleName" value="桌面软件套装" maxlength="60"></div><div><label class="input-label" for="bundleVersion">版本号</label><input id="bundleVersion" value="1.0.0" maxlength="24"></div></div></details></section>
+              </div>
+
+              <aside class="summary-column"><section class="panel summary-panel"><div class="summary-title"><h2>本次打包</h2><span class="soft-icon"><svg><use href="#i-box"/></svg></span></div><p class="summary-subtitle">一个安装包，软件各自独立。</p><div class="summary-label">包含的软件 <span id="includedCount">0 / 3</span></div><div id="softwareSummary"></div><div class="summary-divider"></div><div class="summary-label">安装执行流程</div><div class="flow-item"><span class="flow-number">1</span><div><strong>准备运行环境</strong><p id="runtimeSummaryText">未添加环境安装包</p></div></div><div class="flow-item"><span class="flow-number">2</span><div><strong>安装所选软件</strong><p>C 必装，A / B 由用户勾选</p></div></div><div class="summary-divider"></div><div class="summary-label">交付文件</div><div class="artifact-preview"><svg><use href="#i-file"/></svg><span id="artifactName">桌面软件套装-1.0.0-Bundle.exe</span></div><div class="summary-foot"><svg><use href="#i-check"/></svg>独立目录、快捷方式与卸载入口</div></section><div class="prototype-note"><svg><use href="#i-info"/></svg><p>当前为交互原型。打包和安装进度均为演示，不会生成或执行实际安装包。</p></div></aside>
+            </div>
+
+            <section class="build-console panel" id="buildConsole" hidden><div class="console-heading"><div><svg><use href="#i-terminal"/></svg><h2 id="consoleTitle">演示打包日志</h2><span class="tag tag-blue" id="buildStatusTag">准备中</span></div><button class="icon-btn" type="button" id="collapseConsole" aria-label="收起日志"><svg><use href="#i-up"/></svg></button></div><div class="build-progress"><div id="buildProgressFill"></div></div><div class="build-stage"><span id="buildStage">等待开始</span><strong id="buildPercent">0%</strong></div><div class="console-lines" id="buildLogs" role="log" aria-live="polite"></div></section>
+
+            <div class="action-bar"><div class="readiness"><span class="readiness-icon" id="readinessIcon"><svg><use href="#i-info"/></svg></span><div><strong id="readinessTitle">填写路径，即可开始</strong><span id="readinessText">请配置功能软件 C 与输出目录</span></div></div><div class="action-buttons"><input type="file" id="importFile" accept=".json,application/json" hidden><button type="button" class="btn btn-text" id="importConfig"><svg><use href="#i-upload"/></svg>导入配置</button><button type="button" class="btn btn-white" id="exportConfig"><svg><use href="#i-save"/></svg>保存配置</button><button type="button" class="btn btn-white" id="cancelBuild" hidden>取消打包</button><button type="submit" class="btn btn-primary" id="buildButton"><svg><use href="#i-box"/></svg>开始打包<svg><use href="#i-arrow"/></svg></button></div></div>
+          </form>
+        </section>
+
+        <section class="page" id="page-history" hidden aria-labelledby="historyTitle"><div class="page-heading"><div><div class="eyebrow">BUILD HISTORY</div><h1 id="historyTitle">每一次构建，都有记录。</h1><p>查看本地保存的演示构建与对应配置。</p></div><button class="btn btn-primary" data-go-workspace><svg><use href="#i-plus"/></svg>新的打包</button></div><div class="panel" id="historyList"></div></section>
+
+        <section class="page" id="page-settings" hidden aria-labelledby="settingsTitle"><div class="page-heading"><div><div class="eyebrow">PREFERENCES</div><h1 id="settingsTitle">工具设置</h1><p>配置桌面应用后续使用的编译器位置。</p></div></div><div class="settings-layout"><section class="panel settings-card"><div class="section-heading"><div><span class="soft-icon"><svg><use href="#i-terminal"/></svg></span><h2>打包引擎</h2></div><span class="tag tag-blue">Inno Setup 7</span></div><label class="input-label" for="compilerPath">ISCC.exe 路径</label><div class="path-control"><input id="compilerPath" autocomplete="off"><button class="btn btn-browse" data-browse="compiler"><svg><use href="#i-folder"/></svg>浏览</button></div><p class="input-help">Qt 桌面版本将使用此编译器制作安装包。最终用户安装软件时不需要 Inno Setup。</p><div class="settings-footer"><button class="btn btn-text" id="resetCompiler">恢复默认路径</button><button class="btn btn-primary" id="saveSettings"><svg><use href="#i-check"/></svg>保存设置</button></div></section><section class="panel settings-card"><div class="section-heading"><div><span class="soft-icon"><svg><use href="#i-info"/></svg></span><h2>当前阶段</h2></div></div><div class="phase-line"><span class="phase-check">✓</span><div><strong>需求与方案</strong><p>一个总包，三个软件独立安装。</p></div></div><div class="phase-line"><span class="phase-current">2</span><div><strong>HTML 交互原型</strong><p>当前阶段：确认布局与操作流程。</p></div><span class="tag tag-blue">当前</span></div><div class="phase-line"><span class="phase-next">3</span><div><strong>Qt 桌面实现</strong><p>原型确认后接入真实路径、打包及安装流程。</p></div></div></section></div></section>
+      </main>
+    </div>
+  </div>
+
+  <dialog class="picker-dialog" id="pathDialog"><div class="dialog-heading"><div><span class="dialog-eyebrow">路径选择</span><h2 id="pickerTitle">选择发布目录</h2></div><button class="icon-btn" data-close="pathDialog" aria-label="关闭路径选择"><svg><use href="#i-x"/></svg></button></div><p class="dialog-description" id="pickerDescription">选择示例目录，或直接填写自己的路径。</p><div class="picker-location"><svg><use href="#i-folder"/></svg><span id="pickerLocation">此电脑 / D:</span><span class="tag tag-gray">示例</span></div><div id="pickerChoices" class="picker-choices"></div><div class="picker-manual"><label class="input-label" for="pickerPath" id="pickerPathLabel">目录路径</label><input id="pickerPath" autocomplete="off"><textarea id="pickerMultiple" rows="3" placeholder="也可以粘贴多个安装包路径，每行一个" hidden></textarea><p class="field-error" id="pickerError"></p></div><div class="dialog-footer"><button class="btn btn-white" data-close="pathDialog">取消</button><button class="btn btn-primary" id="confirmPath">选择此目录</button></div></dialog>
+
+  <dialog class="installer-dialog" id="installerDialog"><div class="installer-shell"><aside class="installer-sidebar"><div class="installer-brand"><svg><use href="#i-box"/></svg><span>统一安装向导</span></div><div class="installer-side-art"><svg><use href="#i-layers"/></svg><span class="art-orbit orbit-one"></span><span class="art-orbit orbit-two"></span></div><h2>一次交付，<br>按需安装。</h2><p>先备好运行环境，<br>再安装需要的软件。</p><div class="installer-steps"><div data-installer-step="1" class="current"><span>1</span>选择软件</div><div data-installer-step="2"><span>2</span>确认并安装</div><div data-installer-step="3"><span>3</span>安装结果</div></div><span class="installer-side-foot">软件独立安装 · 独立卸载</span></aside><div class="installer-main"><header class="installer-top"><span class="prototype-badge">安装流程预览</span><button class="icon-btn" id="closeInstaller" aria-label="关闭安装预览"><svg><use href="#i-x"/></svg></button></header><div class="installer-body" id="installerBody"></div><footer class="installer-footer"><span class="installer-footer-note" id="installerFooterNote">此预览不会执行实际安装</span><div><button class="btn btn-white" id="installerBack">取消</button><button class="btn btn-primary" id="installerNext">下一步<svg><use href="#i-arrow"/></svg></button></div></footer></div></div></dialog>
+
+  <dialog class="detail-dialog" id="detailDialog"><div class="dialog-heading"><div><span class="dialog-eyebrow" id="detailEyebrow">构建详情</span><h2 id="detailTitle">演示产物</h2></div><button class="icon-btn" data-close="detailDialog" aria-label="关闭详情"><svg><use href="#i-x"/></svg></button></div><div id="detailBody"></div><div class="dialog-footer"><button class="btn btn-primary" data-close="detailDialog">知道了</button></div></dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><svg><use href="#i-check"/></svg><span></span></div>
+</body>
+</html>

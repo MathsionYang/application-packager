@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>安装包工坊 · HTML 交互原型</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <svg class="svg-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5Z"/><path d="M3 8v9l9 5 9-5V8M12 13v9M7.5 5.5l9 5"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="m9 3-.6 3-2.7 1L3 6l-1 3 2.2 2v2L2 15l1 3 2.7-1 2.7 1 .6 3h6l.6-3 2.7-1 2.7 1 1-3-2.2-2v-2L22 9l-1-3-2.7 1-2.7-1L15 3H9Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h5l2 3h7a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/><path d="M3 9h18"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="8" r="5"/><path d="m11.5 11.5 9 9M16 16l3-3M18.5 18.5l3-3"/></symbol>
+    <symbol id="i-cpu" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9" y="9" width="6" height="6" rx="1"/><path d="M9 3v3m6-3v3M9 18v3m6-3v3M3 9h3m-3 6h3m12-6h3m-3 6h3"/></symbol>
+    <symbol id="i-app" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M8 6h.01M12 6h.01m-4 7h8m-8 4h5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="m6 6 12 12M6 18 18 6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h16m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V10l-7-7Z"/><path d="M14 3v7h7M7 14h10m-10 3h6"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V4m-5 5 5-5 5 5M4 16v5h16v-5"/></symbol>
+    <symbol id="i-terminal" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m6 8 4 4-4 4m7 0h5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v.01"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 10 5-10 5L2 8l10-5Zm-10 9 10 5 10-5M2 16l10 5 10-5"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h12l4 4v12a2 2 0 0 1-2 2Z"/><path d="M7 3v6h10V3M7 21v-8h10v8"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></symbol>
+  </svg>
+
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#workspace" aria-label="安装包工坊首页"><span class="brand-icon"><svg><use href="#i-box"/></svg></span><span>安装包工坊<small>DESKTOP PACKAGER</small></span></a>
+      <div class="nav-label">工作空间</div>
+      <nav aria-label="主导航">
+        <button class="nav-item active" data-page="workspace"><svg><use href="#i-grid"/></svg>打包工作台<span class="nav-active-dot"></span></button>
+        <button class="nav-item" data-page="history"><svg><use href="#i-clock"/></svg>构建记录<span class="nav-count" id="historyCount">0</span></button>
+        <button class="nav-item" data-page="settings"><svg><use href="#i-settings"/></svg>工具设置</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="engine-card"><span class="engine-icon"><svg><use href="#i-terminal"/></svg></span><div><strong>Inno Setup 7</strong><span><i class="dot"></i>编译路径已配置</span></div></div>
+        <button class="sidebar-help" id="aboutButton"><svg><use href="#i-info"/></svg>关于此原型<svg class="tiny"><use href="#i-arrow"/></svg></button>
+        <div class="sidebar-foot">HTML 交互原型 <span>v0.1</span></div>
+      </div>
+    </aside>
+
+    <div class="app-content">
+      <header class="topbar"><div class="breadcrumb">工作空间<span>/</span><strong id="breadcrumbTitle">打包工作台</strong></div><div class="topbar-right"><span class="prototype-badge"><span></span>交互原型</span><span class="local-label">本地工作区</span><div class="avatar">P</div></div></header>
+
+      <main class="main-scroll" id="mainScroll">
+        <section class="page" id="page-workspace" aria-labelledby="workspaceTitle">
+          <div class="page-heading"><div><div class="eyebrow">BUILD YOUR PACKAGE</div><h1 id="workspaceTitle">把软件交付，变得简单。</h1><p>选择发布目录与运行环境，制作一个统一安装包。</p></div><div class="heading-actions"><button class="btn btn-text" id="loadExample"><svg><use href="#i-layers"/></svg>加载完整示例</button><button class="btn btn-white" id="previewButton"><svg><use href="#i-eye"/></svg>安装界面预览</button></div></div>
+
+          <form id="packageForm" novalidate>
+            <div class="workspace-grid">
+              <div class="form-stack">
+                <section class="panel software-panel"><div class="section-heading"><div><span class="step-marker">01</span><h2>软件发布目录</h2></div><span class="section-hint">C 必填 · A / B 按需添加</span></div>
+                  <div class="software-row" data-software="C"><div class="software-icon blue"><svg><use href="#i-app"/></svg></div><div class="software-fields"><div class="field-heading"><label for="pathC">功能软件 <span>C</span></label><span class="tag tag-blue">必填</span><span class="field-status" id="statusC">未配置</span></div><div class="path-control"><input id="pathC" name="pathC" autocomplete="off" placeholder="选择 C 的完整发布目录" aria-describedby="errorC"><button class="btn btn-browse" type="button" data-browse="C"><svg><use href="#i-folder"/></svg>浏览</button></div><span class="field-error" id="errorC"></span></div></div>
+                  <div class="software-row" data-software="A"><div class="software-icon amber"><svg><use href="#i-key"/></svg></div><div class="software-fields"><div class="field-heading"><label for="pathA">认证软件 <span>A</span></label><span class="tag tag-gray">可选</span><span class="field-status" id="statusA">未添加</span></div><div class="path-control"><input id="pathA" name="pathA" autocomplete="off" placeholder="留空则不包含认证软件"><button class="icon-btn clear-path" type="button" data-clear="A" aria-label="清空认证软件 A 路径" hidden><svg><use href="#i-x"/></svg></button><button class="btn btn-browse" type="button" data-browse="A"><svg><use href="#i-folder"/></svg>浏览</button></div></div></div>
+                  <div class="software-row" data-software="B"><div class="software-icon teal"><svg><use href="#i-cpu"/></svg></div><div class="software-fields"><div class="field-heading"><label for="pathB">引擎软件 <span>B</span></label><span class="tag tag-gray">可选</span><span class="field-status" id="statusB">未添加</span></div><div class="path-control"><input id="pathB" name="pathB" autocomplete="off" placeholder="留空则不包含引擎软件"><button class="icon-btn clear-path" type="button" data-clear="B" aria-label="清空引擎软件 B 路径" hidden><svg><use href="#i-x"/></svg></button><button class="btn btn-browse" type="button" data-browse="B"><svg><use href="#i-folder"/></svg>浏览</button></div></div></div>
+                  <div class="panel-note"><svg><use href="#i-info"/></svg>完整保留发布目录中的程序、依赖文件与子目录。</div>
+                </section>
+
+                <section class="panel runtime-panel"><div class="section-heading"><div><span class="step-marker">02</span><h2>运行环境安装包</h2><span class="count-pill" id="runtimeCount">0</span></div><button class="btn btn-small btn-white" type="button" id="addRuntime"><svg><use href="#i-plus"/></svg>添加安装包</button></div><p class="section-description">添加已有的 VC++、.NET 等安装包，支持多个 EXE / MSI。</p><div id="runtimeList"></div><div class="runtime-empty" id="runtimeEmpty"><div class="empty-icon"><svg><use href="#i-layers"/></svg></div><div><strong>为软件备好运行环境</strong><p>已添加的环境会在所有软件之前安装。</p></div><button type="button" class="btn btn-link" id="addRuntimeEmpty">添加环境<svg><use href="#i-plus"/></svg></button></div><div class="runtime-order-note" id="runtimeOrderNote" hidden><svg><use href="#i-shield"/></svg>按列表顺序优先安装；任一环境失败时，停止后续软件安装。</div></section>
+
+                <section class="panel output-panel"><div class="section-heading"><div><span class="step-marker">03</span><h2>安装包输出</h2></div><span class="section-hint">一个 EXE，统一交付</span></div><label class="input-label" for="outputPath">输出目录 <span class="required-star">*</span></label><div class="path-control"><span class="input-prefix"><svg><use href="#i-folder"/></svg></span><input id="outputPath" name="outputPath" autocomplete="off" placeholder="选择安装包保存位置" aria-describedby="errorOutput"><button class="btn btn-browse" type="button" data-browse="output"><svg><use href="#i-folder"/></svg>浏览</button></div><span class="field-error" id="errorOutput"></span><details class="advanced"><summary>更多打包选项<svg><use href="#i-down"/></svg></summary><div class="advanced-fields"><div><label class="input-label" for="bundleName">安装包名称</label><input id="bundleName" value="桌面软件套装" maxlength="60"></div><div><label class="input-label" for="bundleVersion">版本号</label><input id="bundleVersion" value="1.0.0" maxlength="24"></div></div></details></section>
+              </div>
+
+              <aside class="summary-column"><section class="panel summary-panel"><div class="summary-title"><h2>本次打包</h2><span class="soft-icon"><svg><use href="#i-box"/></svg></span></div><p class="summary-subtitle">一个安装包，软件各自独立。</p><div class="summary-label">包含的软件 <span id="includedCount">0 / 3</span></div><div id="softwareSummary"></div><div class="summary-divider"></div><div class="summary-label">安装执行流程</div><div class="flow-item"><span class="flow-number">1</span><div><strong>准备运行环境</strong><p id="runtimeSummaryText">未添加环境安装包</p></div></div><div class="flow-item"><span class="flow-number">2</span><div><strong>安装所选软件</strong><p>C 必装，A / B 由用户勾选</p></div></div><div class="summary-divider"></div><div class="summary-label">交付文件</div><div class="artifact-preview"><svg><use href="#i-file"/></svg><span id="artifactName">桌面软件套装-1.0.0-Bundle.exe</span></div><div class="summary-foot"><svg><use href="#i-check"/></svg>独立目录、快捷方式与卸载入口</div></section><div class="prototype-note"><svg><use href="#i-info"/></svg><p>当前为交互原型。打包和安装进度均为演示，不会生成或执行实际安装包。</p></div></aside>
+            </div>
+
+            <section class="build-console panel" id="buildConsole" hidden><div class="console-heading"><div><svg><use href="#i-terminal"/></svg><h2 id="consoleTitle">演示打包日志</h2><span class="tag tag-blue" id="buildStatusTag">准备中</span></div><button class="icon-btn" type="button" id="collapseConsole" aria-label="收起日志"><svg><use href="#i-up"/></svg></button></div><div class="build-progress"><div id="buildProgressFill"></div></div><div class="build-stage"><span id="buildStage">等待开始</span><strong id="buildPercent">0%</strong></div><div class="console-lines" id="buildLogs" role="log" aria-live="polite"></div></section>
+
+            <div class="action-bar"><div class="readiness"><span class="readiness-icon" id="readinessIcon"><svg><use href="#i-info"/></svg></span><div><strong id="readinessTitle">填写路径，即可开始</strong><span id="readinessText">请配置功能软件 C 与输出目录</span></div></div><div class="action-buttons"><input type="file" id="importFile" accept=".json,application/json" hidden><button type="button" class="btn btn-text" id="importConfig"><svg><use href="#i-upload"/></svg>导入配置</button><button type="button" class="btn btn-white" id="exportConfig"><svg><use href="#i-save"/></svg>保存配置</button><button type="button" class="btn btn-white" id="cancelBuild" hidden>取消打包</button><button type="submit" class="btn btn-primary" id="buildButton"><svg><use href="#i-box"/></svg>开始打包<svg><use href="#i-arrow"/></svg></button></div></div>
+          </form>
+        </section>
+
+        <section class="page" id="page-history" hidden aria-labelledby="historyTitle"><div class="page-heading"><div><div class="eyebrow">BUILD HISTORY</div><h1 id="historyTitle">每一次构建，都有记录。</h1><p>查看本地保存的演示构建与对应配置。</p></div><button class="btn btn-primary" data-go-workspace><svg><use href="#i-plus"/></svg>新的打包</button></div><div class="panel" id="historyList"></div></section>
+
+        <section class="page" id="page-settings" hidden aria-labelledby="settingsTitle"><div class="page-heading"><div><div class="eyebrow">PREFERENCES</div><h1 id="settingsTitle">工具设置</h1><p>配置桌面应用后续使用的编译器位置。</p></div></div><div class="settings-layout"><section class="panel settings-card"><div class="section-heading"><div><span class="soft-icon"><svg><use href="#i-terminal"/></svg></span><h2>打包引擎</h2></div><span class="tag tag-blue">Inno Setup 7</span></div><label class="input-label" for="compilerPath">ISCC.exe 路径</label><div class="path-control"><input id="compilerPath" autocomplete="off"><button class="btn btn-browse" data-browse="compiler"><svg><use href="#i-folder"/></svg>浏览</button></div><p class="input-help">Qt 桌面版本将使用此编译器制作安装包。最终用户安装软件时不需要 Inno Setup。</p><div class="settings-footer"><button class="btn btn-text" id="resetCompiler">恢复默认路径</button><button class="btn btn-primary" id="saveSettings"><svg><use href="#i-check"/></svg>保存设置</button></div></section><section class="panel settings-card"><div class="section-heading"><div><span class="soft-icon"><svg><use href="#i-info"/></svg></span><h2>当前阶段</h2></div></div><div class="phase-line"><span class="phase-check">✓</span><div><strong>需求与方案</strong><p>一个总包，三个软件独立安装。</p></div></div><div class="phase-line"><span class="phase-current">2</span><div><strong>HTML 交互原型</strong><p>当前阶段：确认布局与操作流程。</p></div><span class="tag tag-blue">当前</span></div><div class="phase-line"><span class="phase-next">3</span><div><strong>Qt 桌面实现</strong><p>原型确认后接入真实路径、打包及安装流程。</p></div></div></section></div></section>
+      </main>
+    </div>
+  </div>
+
+  <dialog class="picker-dialog" id="pathDialog"><div class="dialog-heading"><div><span class="dialog-eyebrow">路径选择</span><h2 id="pickerTitle">选择发布目录</h2></div><button class="icon-btn" data-close="pathDialog" aria-label="关闭路径选择"><svg><use href="#i-x"/></svg></button></div><p class="dialog-description" id="pickerDescription">选择示例目录，或直接填写自己的路径。</p><div class="picker-location"><svg><use href="#i-folder"/></svg><span id="pickerLocation">此电脑 / D:</span><span class="tag tag-gray">示例</span></div><div id="pickerChoices" class="picker-choices"></div><div class="picker-manual"><label class="input-label" for="pickerPath" id="pickerPathLabel">目录路径</label><input id="pickerPath" autocomplete="off"><textarea id="pickerMultiple" rows="3" placeholder="也可以粘贴多个安装包路径，每行一个" hidden></textarea><p class="field-error" id="pickerError"></p></div><div class="dialog-footer"><button class="btn btn-white" data-close="pathDialog">取消</button><button class="btn btn-primary" id="confirmPath">选择此目录</button></div></dialog>
+
+  <dialog class="installer-dialog" id="installerDialog"><div class="installer-shell"><aside class="installer-sidebar"><div class="installer-brand"><svg><use href="#i-box"/></svg><span>统一安装向导</span></div><div class="installer-side-art"><svg><use href="#i-layers"/></svg><span class="art-orbit orbit-one"></span><span class="art-orbit orbit-two"></span></div><h2>一次交付，<br>按需安装。</h2><p>先备好运行环境，<br>再安装需要的软件。</p><div class="installer-steps"><div data-installer-step="1" class="current"><span>1</span>选择软件</div><div data-installer-step="2"><span>2</span>确认并安装</div><div data-installer-step="3"><span>3</span>安装结果</div></div><span class="installer-side-foot">软件独立安装 · 独立卸载</span></aside><div class="installer-main"><header class="installer-top"><span class="prototype-badge">安装流程预览</span><button class="icon-btn" id="closeInstaller" aria-label="关闭安装预览"><svg><use href="#i-x"/></svg></button></header><div class="installer-body" id="installerBody"></div><footer class="installer-footer"><span class="installer-footer-note" id="installerFooterNote">此预览不会执行实际安装</span><div><button class="btn btn-white" id="installerBack">取消</button><button class="btn btn-primary" id="installerNext">下一步<svg><use href="#i-arrow"/></svg></button></div></footer></div></div></dialog>
+
+  <dialog class="detail-dialog" id="detailDialog"><div class="dialog-heading"><div><span class="dialog-eyebrow" id="detailEyebrow">构建详情</span><h2 id="detailTitle">演示产物</h2></div><button class="icon-btn" data-close="detailDialog" aria-label="关闭详情"><svg><use href="#i-x"/></svg></button></div><div id="detailBody"></div><div class="dialog-footer"><button class="btn btn-primary" data-close="detailDialog">知道了</button></div></dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><svg><use href="#i-check"/></svg><span></span></div>
+</body>
+</html>
