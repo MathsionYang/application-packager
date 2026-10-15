@@ -109,6 +109,7 @@ def test_invalid_config_is_rejected_before_build(config, issue):
     elif issue == 'bad_compiler':
         config.compiler = 'Z:/missing.exe'
     elif issue == 'bad_version':
+        config.auto_version = False
         config.version = '1.0\n[Run]'
     with pytest.raises(ValidationError):
         validate_config(config)

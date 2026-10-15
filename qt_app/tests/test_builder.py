@@ -211,7 +211,7 @@ def test_real_bundle_contains_all_sources_unique_runtimes_and_reviewable_artifac
         path.parent.mkdir(parents=True)
         path.write_bytes(FIXTURE.read_bytes())
     config = BundleConfig(paths={role: str(path) for role, path in sources.items()}, output=str(tmp_path / 'output'),
-                          name='测试 套装 {#literal}', version='2.3.4',
+                          name='测试 套装 {#literal}', version='2.3.4', auto_version=False,
                           runtimes=[RuntimeInstaller(runtime1), RuntimeInstaller(runtime2)], compiler=str(COMPILER))
     logs, progress = [], []
     result = builder.build_bundle(config, profile_path=tmp_path / 'products.json', log=logs.append,

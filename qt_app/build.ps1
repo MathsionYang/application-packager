@@ -41,6 +41,11 @@ print("Qt", m.version("PySide6-Essentials"), "PyInstaller", m.version("PyInstall
     if ($LASTEXITCODE -ne 0) { throw 'PyInstaller build failed.' }
     $executable = Join-Path $projectDir 'dist\DesktopPackager\DesktopPackager.exe'
     if (-not (Test-Path -LiteralPath $executable)) { throw 'Build returned without the expected executable.' }
+    $releaseDir = Split-Path -Parent $executable
+    Copy-Item -LiteralPath (Join-Path $projectDir 'README.md') -Destination $releaseDir -Force
+    Get-ChildItem -LiteralPath $projectDir -Filter '*.html' -File | ForEach-Object {
+        Copy-Item -LiteralPath $_.FullName -Destination $releaseDir -Force
+    }
     Write-Host "Built: $executable"
     Write-Host 'Distribute the entire dist\DesktopPackager directory, including _internal.'
 } finally {

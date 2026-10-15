@@ -250,6 +250,19 @@ def read_product_metadata(path: Path) -> dict[str, str]:
     return result
 
 
+def resolve_product_version(fields: dict[str, str]) -> tuple[str, str]:
+    """Use the same numeric EXE version for children and automatic bundles."""
+    for field in ('ProductVersion', 'FileVersion'):
+        value = fields.get(field, '').replace(',', '.').replace(' ', '')
+        pattern = r'(\d+(?:\.\d+){0,3})'
+        if field == 'ProductVersion':
+            pattern += r'(?:[-+][A-Za-z0-9.-]+)?'
+        match = re.fullmatch(pattern, value)
+        if match:
+            return match.group(1), field
+    return '1.0.0', 'default'
+
+
 def _decode_line(value: bytes) -> str:
     for encoding in dict.fromkeys(('utf-8-sig', locale.getpreferredencoding(False), 'mbcs' if os.name == 'nt' else 'utf-8')):
         try:
@@ -335,7 +348,7 @@ def _remove_task(path: Path) -> None:
 
 def build_bundle(config: BundleConfig, *, log=lambda _: None, progress=lambda *_: None,
                  cancel: threading.Event | None = None, profile_path: Path | None = None,
-                 cache_dir: Path | None = None) -> BuildResult:
+                 cache_dir: Path | None = None, version_resolved=lambda _: None) -> BuildResult:
     cancel = cancel if cancel is not None else threading.Event()
     _check_cancel(cancel)
     # Freeze GUI-owned mutable config at the task boundary.
@@ -356,6 +369,7 @@ def build_bundle(config: BundleConfig, *, log=lambda _: None, progress=lambda *_
         raise ValueError('依赖包缓存不能写入原始发布目录')
     metadata = {}
     metadata_signatures = {}
+    version_sources = {}
     resolved = []
     for item in software:
         before = _signature(item.entry_path)
@@ -364,11 +378,17 @@ def build_bundle(config: BundleConfig, *, log=lambda _: None, progress=lambda *_
             raise RuntimeError(f'源入口在读取产品信息时发生变化：{item.entry_path}')
         metadata_signatures[item.role] = before
         metadata[item.role] = fields
-        product_version = fields.get('ProductVersion', fields.get('FileVersion', ''))
-        match = re.match(r'\d+(?:\.\d+){0,3}', product_version.replace(',', '.').replace(' ', ''))
+        product_version, version_sources[item.role] = resolve_product_version(fields)
         resolved.append(replace(item, name=fields.get('ProductName', fields.get('FileDescription', item.entry_relative.stem)),
-                                version=match.group(0) if match else '1.0.0'))
+                                version=product_version))
     software = resolved
+    bundle_version_source = None
+    if config.auto_version:
+        primary = next(item for item in software if item.role == 'C')
+        config.version = primary.version
+        bundle_version_source = {'role': 'C', 'entry_path': str(primary.entry_path),
+                                 'field': version_sources['C'], 'version': config.version}
+        version_resolved(config.version)
     profiles = _product_profiles(software, profile_path)
     _check_cancel(cancel)
     output = Path(config.output.strip()).resolve()
@@ -389,6 +409,8 @@ def build_bundle(config: BundleConfig, *, log=lambda _: None, progress=lambda *_
                 'scripts_purpose': '主软件脚本引用原始目录及已校验的依赖包；总包脚本引用任务载荷。重建请导入 config.json、products.json，并提供原始发布文件及环境包。所选 DLL 有逐次 SHA-256，其余软件输入元数据不构成内容哈希证据。',
                 'warnings': ['运行环境 EXE 参数由厂商定义；未知 EXE 的 /norestart 行为需要在测试机确认。',
                              '用户配置按文件类型及常见配置目录保留；真实产品的数据/升级规则需独立验收。']}
+    if bundle_version_source is not None:
+        manifest['bundle_version_source'] = bundle_version_source
     build_log = (logs / 'build.log').open('w', encoding='utf-8', newline='\n')
     def emit(message):
         build_log.write(str(message) + '\n')
@@ -411,6 +433,10 @@ def build_bundle(config: BundleConfig, *, log=lambda _: None, progress=lambda *_
     cache_activations = []
     compiler_fingerprint = None
     try:
+        if bundle_version_source is not None:
+            source = bundle_version_source['field']
+            detail = '未找到可用的 ProductVersion / FileVersion，使用缺省值' if source == 'default' else source
+            emit(f'套装版本自动跟随软件 C 主程序：{config.version}（{detail}；{primary.entry_path}）')
         _json_write(artifacts / 'config.json', config.to_dict())
         (artifacts / 'README.txt').write_text(
             '构建记录与重建说明\n\nmanifest.json 记录软件输入的相对路径、大小及修改时间，以及环境包与实际输出的 SHA-256。\n'

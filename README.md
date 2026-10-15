@@ -8,10 +8,14 @@ A Windows desktop application for building one Inno Setup bundle from independen
 - Runtime installer failure or cancellation is logged and skipped so later runtime and product installers continue.
 - A custom `.ico` file can be selected for the generated bundle installer.
 - Selected third-party DLLs can be hashed, cached into dependency sub-installers, and reused when their hashes are unchanged.
+- Product IDs are generated once and reused across upgrades. The bundle version follows product C's main EXE by default, with a manual override.
+
+Open the [offline HTML user manual](qt_app/用户手册.html) for detailed instructions, screenshots, upgrades, and troubleshooting. Download or open the local HTML file in a browser; it works without an internet connection.
 
 ## Repository layout
 
 - `qt_app/` - Qt/PySide6 desktop application, packager backend, tests, and release artifacts.
+- `qt_app/用户手册.html` - self-contained Chinese user manual with embedded screenshots.
 - `prototype/` - HTML prototype used for UI review.
 - `安装包工坊-原型.html` - standalone prototype page.
 - `桌面软件统一安装包-需求分析与方案.md` - requirements and packaging design.

@@ -63,7 +63,7 @@ def _check_tree(source: Path):
 def validate_config(config: BundleConfig, *, check_files: bool = True) -> list[ResolvedSoftware]:
     if not config.name.strip() or any(ord(c) < 32 for c in config.name) or len(config.name) > 120:
         raise ValidationError('安装包名称不能为空、包含控制字符或超过 120 字')
-    if not re.fullmatch(r'\d+(?:\.\d+){0,3}(?:[-+][A-Za-z0-9.-]+)?', config.version):
+    if not config.auto_version and not re.fullmatch(r'\d+(?:\.\d+){0,3}(?:[-+][A-Za-z0-9.-]+)?', config.version):
         raise ValidationError('版本格式错误，请使用例如 1.0.0 的版本号')
     compiler = Path(config.compiler.strip())
     _readable_file(compiler, 'Inno Setup 编译器')

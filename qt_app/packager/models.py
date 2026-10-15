@@ -46,10 +46,11 @@ class BundleConfig:
     dependency_records: dict[str, str] = field(default_factory=dict)
     hash_workers: int = 2
     icon_path: str = ''
+    auto_version: bool = True
 
     def to_dict(self) -> dict:
         return {'paths': dict(self.paths), 'output': self.output, 'icon_path': self.icon_path,
-                'name': self.name, 'version': self.version,
+                'name': self.name, 'version': self.version, 'auto_version': self.auto_version,
                 'runtimes': [runtime.to_dict() for runtime in self.runtimes], 'entries': dict(self.entries),
                 'compiler': self.compiler, 'desktop_shortcuts': self.desktop_shortcuts,
                 'dependency_files': {role: list(paths) for role, paths in self.dependency_files.items()},
@@ -79,6 +80,10 @@ class BundleConfig:
         if not isinstance(shortcuts, bool):
             raise ValueError('桌面快捷方式选项格式错误')
         values['desktop_shortcuts'] = shortcuts
+        auto_version = data.get('auto_version', True)
+        if not isinstance(auto_version, bool):
+            raise ValueError('自动版本选项必须为布尔值')
+        values['auto_version'] = auto_version
         from .dependencies import normalize_path
         selections = data.get('dependency_files', {})
         if not isinstance(selections, dict) or any(role not in ROLE_ORDER for role in selections):

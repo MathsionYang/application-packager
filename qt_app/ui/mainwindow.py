@@ -32,6 +32,7 @@ def basename(path):
 class BuildThread(QThread):
     log = Signal(str)
     progress = Signal(int, str)
+    version_resolved = Signal(str)
     succeeded = Signal(object)
     failed = Signal(str, bool)
 
@@ -44,7 +45,8 @@ class BuildThread(QThread):
         try:
             from packager.builder import build_bundle, BuildCancelled
             result = build_bundle(self.config, log=self.log.emit, progress=self.progress.emit,
-                                  cancel=self.cancel, profile_path=self.profile_path)
+                                  cancel=self.cancel, profile_path=self.profile_path,
+                                  version_resolved=self.version_resolved.emit)
             self.succeeded.emit(result)
         except Exception as exc:
             from packager.builder import BuildCancelled
@@ -57,7 +59,7 @@ class ValidationThread(QThread):
 
     def __init__(self, config, cancel, parent):
         super().__init__(parent)
-        self.config, self.cancel = config, cancel
+        self.config, self.cancel = BundleConfig.from_dict(config.to_dict()), cancel
 
     @Slot()
     def run(self):
@@ -65,7 +67,11 @@ class ValidationThread(QThread):
             if self.cancel.is_set():
                 self.outcome.emit(('cancelled', None))
             else:
-                validate_config(self.config, check_files=False)
+                software = validate_config(self.config, check_files=False)
+                if self.config.auto_version:
+                    from packager.builder import read_product_metadata, resolve_product_version
+                    primary = next(item for item in software if item.role == 'C')
+                    self.config.version, _ = resolve_product_version(read_product_metadata(primary.entry_path))
                 self.outcome.emit(('cancelled' if self.cancel.is_set() else 'valid', self.config))
         except EntrySelectionRequired as exc:
             self.outcome.emit(('entry', exc))
@@ -383,6 +389,12 @@ class MainWindow(QMainWindow):
         af.addWidget(name_col, 2)
         af.addWidget(version_col, 1)
         al.addWidget(fields)
+        self.auto_version_check = WorkshopCheckBox('自动使用软件 C 的主程序版本')
+        self.auto_version_check.setChecked(True)
+        self.auto_version_check.setToolTip('打包前读取所选主程序的版本；无可用版本时使用 1.0.0。')
+        self.version_input.setReadOnly(True)
+        self.auto_version_check.toggled.connect(self._auto_version_changed)
+        al.addWidget(self.auto_version_check)
         self.shortcuts_check = WorkshopCheckBox('创建各软件独立的桌面快捷方式')
         self.shortcuts_check.setChecked(True)
         self.shortcuts_check.toggled.connect(self.config_changed)
@@ -519,6 +531,7 @@ class MainWindow(QMainWindow):
                             output=self.output_input.text().strip(), icon_path=self.icon_input.text().strip(),
                             name=self.name_input.text().strip(),
                             version=self.version_input.text().strip(),
+                            auto_version=self.auto_version_check.isChecked(),
                             runtimes=[RuntimeInstaller.from_dict(r.to_dict()) for r in self.runtimes],
                             entries=dict(self.entries), compiler=self.compiler,
                             desktop_shortcuts=self.shortcuts_check.isChecked(),
@@ -537,6 +550,8 @@ class MainWindow(QMainWindow):
         self.icon_input.setText(config.icon_path)
         self.name_input.setText(config.name)
         self.version_input.setText(config.version)
+        self.auto_version_check.setChecked(config.auto_version)
+        self.version_input.setReadOnly(config.auto_version)
         self.shortcuts_check.setChecked(config.desktop_shortcuts)
         self.runtimes = [RuntimeInstaller.from_dict(r.to_dict()) for r in config.runtimes]
         self.entries = dict(config.entries)
@@ -554,6 +569,16 @@ class MainWindow(QMainWindow):
     def _source_changed(self, role):
         if not self.loading:
             self.entries.pop(role, None)
+        self.config_changed()
+
+    def _auto_version_changed(self, checked):
+        self.version_input.setReadOnly(checked)
+        self.config_changed()
+
+    @Slot(str)
+    def _bundle_version_resolved(self, version):
+        self.active_config.version = version
+        self.version_input.setText(version)
         self.config_changed()
 
     def config_changed(self, *_):
@@ -819,7 +844,10 @@ class MainWindow(QMainWindow):
             self.thread_finished()
             QMessageBox.warning(self, '请检查打包配置', str(value))
         else:
+            self.active_config = value
             self.entries = dict(self.active_config.entries)
+            if self.active_config.auto_version:
+                self._bundle_version_resolved(self.active_config.version)
             self.persist()
             self._begin_build()
 
@@ -828,6 +856,7 @@ class MainWindow(QMainWindow):
         self.worker = self.thread
         self.thread.log.connect(self.append_log)
         self.thread.progress.connect(self.on_progress)
+        self.thread.version_resolved.connect(self._bundle_version_resolved)
         self.thread.succeeded.connect(self.build_succeeded)
         self.thread.failed.connect(self.build_failed)
         self.thread.finished.connect(self.thread_finished)
@@ -848,6 +877,7 @@ class MainWindow(QMainWindow):
         self.runtime_container.setEnabled(not building)
         self.add_runtime_button.setEnabled(not building)
         self.shortcuts_check.setEnabled(not building)
+        self.auto_version_check.setEnabled(not building)
         if not building:
             self.render_summary()
 
