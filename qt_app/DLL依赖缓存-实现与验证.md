@@ -1,6 +1,6 @@
 # DLL 依赖缓存：实现与验证
 
-日期：2026-10-14。已按《DLL选择与哈希缓存依赖包-需求分析》实现并重新生成桌面程序。
+日期：2026-10-15。已按《DLL选择与哈希缓存依赖包-需求分析》实现并重新生成桌面程序。
 
 ## 使用
 
@@ -38,7 +38,7 @@
 - 记录导出/导入及伴随包迁移，选择记录与成功包记录严格区分。
 - Qt 筛选后保留隐藏选择、真实路径恢复、保存、切根隔离旧结果和关闭时取消线程。
 - 使用本机真实 Inno 7 编译 helper → 主子包 → 总包；实际执行两次完整夹具构建，第二次复用依赖包。错误 DLL 哈希与被替换缓存 EXE 均被编译器拒绝。
-- 运行库失败、用户在运行库安装窗口中取消、MSI 1602/1641 及其他非白名单退出码均会记录警告??过当前环境包，后续环境包和 A/B/C 仍继续安装；A/B/C 子安装器失败仍按原策略停止后续软件。
+- Optional runtime installer failures, user cancellation, MSI 1602/1641, and other non-whitelisted exit codes are logged and skipped so later runtime and A/B/C installers continue; A/B/C failures still stop subsequent software.
 
 原生截图已检查：`qa-artifacts/dependency-cache/workspace.png`、`dependencies.png`。均使用微型模拟目录，未扫描或哈希用户的大型业务软件目录。
 
@@ -54,6 +54,6 @@
 - EXE SHA-256：`539030dd71142826b0d852deedb5fddcdcb320aa9f563abe762d76326a100e12`。
 - ZIP SHA-256：`ce734c330c18b2f15703b053cc13a4b471c356dd943bd6995d33b351b250f0af`。
 
-发布清单：`qa-artifacts/release/release-manifest.json`。构建日志：`qa-artifacts/dependency-cache/build.log`。验证摘要：`qa-artifacts/dependency-cache/verification.json`。
+发布清单：`qa-artifacts/release/release-manifest.json`。构建日志：`qa-artifacts/dependency-cache/build.log`。验证摘要：`qa-artifacts/runtime-icon/verification.json`。
 
 首次仍需哈希并压缩所选 DLL；命中后仍读取当前 DLL 和缓存包做校验，并重新生成主包与总包。任一选中成员变化，首版重建该软件的整个依赖子包。未运行目标软件或运行库安装器；真实产品的安装、运行、升级与卸载仍需在测试机验收。

@@ -1,6 +1,6 @@
 # 启动与部署验证记录
 
-日期：2026-10-14。
+日期：2026-10-15。
 
 ## 环境
 
@@ -51,4 +51,4 @@
 - PyInstaller `--clean` 完整重建 EXE，冻结离屏冒烟及 Windows 原生截图均退出 0，新模块已检查包含。
 - EXE 为 2,452,409 字节；SHA-256 为 `539030dd71142826b0d852deedb5fddcdcb320aa9f563abe762d76326a100e12`。
 - ZIP 为 38,266,365 字节；SHA-256 为 `ce734c330c18b2f15703b053cc13a4b471c356dd943bd6995d33b351b250f0af`。CRC、内含 EXE/README 一致性通过。
-- 当前发布清单已更新为 17 个源码文件及新模块证据。详细操作、验证与边界见 `DLL依赖缓存-实现与验证.md`。
+- Current release manifest tracks 30 source/test files and new module evidence; see `DLL依赖缓存-实现与验证.md` for detailed operations, verification, and boundaries.
